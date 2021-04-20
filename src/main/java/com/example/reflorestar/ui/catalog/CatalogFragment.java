@@ -48,7 +48,7 @@ public class CatalogFragment extends Fragment {
             }
         });
 
-        listView = (ListView) root.findViewById(R.id.resultList);
+        listView = root.findViewById(R.id.resultList);
 
         final ArrayList<HashMap<String,Object>> list = new ArrayList<HashMap<String, Object>>();
 
@@ -81,18 +81,11 @@ public class CatalogFragment extends Fragment {
 
         adapter = new CustomAdapter(root.getContext(),list);
         listView.setAdapter(adapter);
-        listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(root.getContext(),list.get(position).get("FirstLastName").toString(),Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
 
-            }
+            Toast.makeText(root.getContext(),list.get(position).get("FirstLastName").toString(),Toast.LENGTH_SHORT).show();
         });
-
 
         return root;
     }

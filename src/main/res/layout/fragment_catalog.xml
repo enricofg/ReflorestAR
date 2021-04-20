@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
+        android:layout_marginTop="40dp"
         android:text="@string/title_catalog"
         android:textAllCaps="true"
         android:textColor="#2C282C"
