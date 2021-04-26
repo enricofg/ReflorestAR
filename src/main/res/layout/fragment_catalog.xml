@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:backgroundTint="#E8E4DA"
+    android:layout_height="fill_parent"
+    android:background="#E8E4DA"
     tools:context=".ui.catalog.CatalogFragment">
 
     <TextView
-        android:id="@+id/catalogTitle"
+        android:id="@+id/projectsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
@@ -31,7 +31,7 @@
         android:elevation="2dp"
         app:endIconMode="clear_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/catalogTitle">
+        app:layout_constraintTop_toBottomOf="@+id/projectsTitle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="fill_parent"
@@ -47,7 +47,7 @@
         android:id="@+id/searchButton"
         android:layout_width="80dp"
         android:layout_height="60dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="96dp"
         android:background="#00000000"
         android:drawableStart="@drawable/baseline_search_24"
         android:drawableTint="@color/colorPrimary"
@@ -60,9 +60,10 @@
     <ListView
         android:id="@+id/resultList"
         android:layout_width="340dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="40dp"
+        android:layout_height="450dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/catalogSearch" />
 

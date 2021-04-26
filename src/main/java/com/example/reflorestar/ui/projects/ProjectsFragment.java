@@ -1,4 +1,4 @@
-package com.example.reflorestar.ui.catalog;
+package com.example.reflorestar.ui.projects;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
@@ -24,9 +23,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CatalogFragment extends Fragment {
+public class ProjectsFragment extends Fragment {
 
-    private CatalogViewModel catalogViewModel;
+    private ProjectsViewModel projectsViewModel;
     private TextInputLayout searchText;
     private Button searchButton;
     private ListView listView;
@@ -34,23 +33,9 @@ public class CatalogFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        catalogViewModel =
-                new ViewModelProvider(this).get(CatalogViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_catalog, container, false);
-
-        searchText = root.findViewById(R.id.catalogSearch);
-        Editable editText = searchText.getEditText().getText();
-
-        searchButton = root.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(view -> {
-            if(!editText.toString().matches("")){
-                Toast.makeText(root.getContext(), editText, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        /*searchText.setEndIconOnClickListener(view -> {
-            searchText.getEditText().setText("");
-        });*/
+        projectsViewModel =
+                new ViewModelProvider(this).get(ProjectsViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_projects, container, false);
 
         listView = root.findViewById(R.id.resultList);
 
@@ -82,6 +67,15 @@ public class CatalogFragment extends Fragment {
         map3.put("Params2","Params2 3");
         map3.put("Params3","Params3 3");
         list.add(map3);
+
+        HashMap<String,Object> map4 = new HashMap<String,Object>();
+        map4.put("Image",R.drawable.baseline_camera_alt_24);
+        map4.put("FirstLastName","FirstLastName 4");
+        map4.put("Descriptions","Descriptions 4 Descriptions 4 Descriptions 4 Descriptions 4 Descriptions 4 Descriptions 4 Descriptions 4 Descriptions 4");
+        map4.put("Params1","Params1 3");
+        map4.put("Params2","Params2 3");
+        map4.put("Params3","Params3 3");
+        list.add(map4);
 
         adapter = new CustomAdapter(root.getContext(),list);
         listView.setAdapter(adapter);

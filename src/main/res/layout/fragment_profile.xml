@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#E8E4DA"
+    android:backgroundTint="@color/colorLight"
     tools:context=".ui.profile.ProfileFragment">
 
     <LinearLayout
@@ -12,47 +12,54 @@
         android:layout_height="match_parent"
         android:background="@color/colorLight"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="405dp">
+            android:layout_height="350dp">
+
             <LinearLayout
-                android:background="@drawable/gradientbackground"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="325dp"
+                android:background="@drawable/gradientbackground"
                 android:orientation="vertical">
+
                 <ImageView
-                    android:layout_marginTop="45dp"
-                    android:layout_gravity="center_horizontal"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:src="@drawable/ic_launcher_foreground"/>
-                <TextView
-                    android:layout_marginTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="45dp"
+                    android:src="@drawable/ic_launcher_foreground" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
                     android:text="John Doe"
                     android:textColor="#fff"
-                    android:textStyle="bold"
-                    android:textSize="21sp"/>
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
-                android:layout_width="400dp"
+                android:layout_width="380dp"
                 android:layout_height="120dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="275dp">
+                android:layout_marginTop="275dp"
+                android:elevation="2dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:weightSum="3">
+
                     <LinearLayout
-                        android:gravity="center"
-                        android:orientation="vertical"
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_height="match_parent">
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -69,12 +76,13 @@
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
+
                     <LinearLayout
-                        android:gravity="center"
-                        android:orientation="vertical"
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_height="match_parent">
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -91,12 +99,13 @@
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
+
                     <LinearLayout
-                        android:gravity="center"
-                        android:orientation="vertical"
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_height="match_parent">
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -116,82 +125,74 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
+
         <LinearLayout
             android:layout_width="360dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_gravity="center"
-            android:layout_marginTop="45dp">
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
             <LinearLayout
-                android:orientation="horizontal"
-                android:paddingLeft="25dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp">
+
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_home_black_24dp"/>
-                <TextView
-                    android:textStyle="bold"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="john@mail.com"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="25dp"
-                android:orientation="horizontal"
-                android:paddingLeft="25dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/baseline_menu_book_24"/>
-                <TextView
-                    android:textStyle="bold"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="+1 111 111 111"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="25dp"
-                android:orientation="horizontal"
-                android:paddingLeft="25dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/baseline_camera_alt_24"/>
-                <TextView
-                    android:textStyle="bold"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="Add to group"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="25dp"
-                android:orientation="horizontal"
-                android:paddingLeft="25dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/baseline_face_24"/>
+                    android:src="@drawable/baseline_menu_book_24" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="20dp"
-                    android:text="Description of something"
+                    android:text="123 456 789 101 112 131 415"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/baseline_camera_alt_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:text="Something something"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/baseline_face_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:text="Something something else"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -202,8 +203,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="35dp"
             android:background="@drawable/buttonstyle"
-            android:text="DoSomething"
+            android:text="Logout?"
             android:textColor="#fff" />
     </LinearLayout>
 
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
