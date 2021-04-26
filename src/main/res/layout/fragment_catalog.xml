@@ -11,8 +11,8 @@
         android:id="@+id/projectsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="36dp"
         android:text="@string/title_catalog"
         android:textAllCaps="true"
         android:textColor="#2C282C"
@@ -21,41 +21,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/catalogSearch"
-        android:layout_width="300dp"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="350dp"
         android:layout_height="70dp"
-        android:layout_marginStart="28dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_white_rounded"
-        android:elevation="2dp"
-        app:endIconMode="clear_text"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/projectsTitle">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/search"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:maxLines="1"
-            android:singleLine="true" />
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/catalogSearch"
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:background="@drawable/bg_white_rounded"
+            android:elevation="2dp"
+            app:endIconMode="clear_text">
 
-    <Button
-        android:id="@+id/searchButton"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="96dp"
-        android:background="#00000000"
-        android:drawableStart="@drawable/baseline_search_24"
-        android:drawableTint="@color/colorPrimary"
-        android:gravity="center"
-        android:paddingStart="14dp"
-        app:layout_constraintStart_toEndOf="@+id/catalogSearch"
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="40dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="-4dp"
+            android:background="#00000000"
+            android:drawableStart="@drawable/baseline_search_24"
+            android:drawableTint="@color/colorPrimary"
+            android:gravity="center"
+            android:paddingStart="14dp"
+
+            />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/resultList"
@@ -65,6 +72,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/catalogSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
