@@ -54,3 +54,8 @@ sceneform.asset('sampledata/elmtree.OBJ',
         'default',
         'sampledata/elmtree.sfa',
         'src/main/res/raw/elmtree')
+
+sceneform.asset('sampledata/pinetree.obj',
+        'default',
+        'sampledata/pinetree.sfa',
+        'src/main/res/raw/pinetree')
