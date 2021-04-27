@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -87,15 +88,13 @@ public class CatalogFragment extends Fragment {
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            /*Fragment catalogItemFragment = new CatalogItemFragment();
+            String firstLastName = list.get(position).get("FirstLastName").toString();
+            String descriptions = list.get(position).get("Descriptions").toString();
 
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, catalogItemFragment);
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            ft.addToBackStack(null);
-            ft.commit();
-*/
-            Toast.makeText(root.getContext(),list.get(position).get("FirstLastName").toString(),Toast.LENGTH_SHORT).show();
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.catalog_container, new CatalogItemFragment(firstLastName, descriptions)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+
+            //Toast.makeText(root.getContext(),list.get(position).get("FirstLastName").toString(),Toast.LENGTH_SHORT).show();
         });
 
         return root;
