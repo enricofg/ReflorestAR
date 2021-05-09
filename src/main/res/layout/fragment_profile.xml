@@ -7,7 +7,22 @@
     android:backgroundTint="@color/colorLight"
     tools:context=".ui.profile.ProfileFragment">
 
+    <Button
+        android:id="@+id/configButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="4dp"
+        android:background="#00000000"
+        android:drawableStart="@drawable/baseline_settings_36"
+        android:drawableTint="@color/colorLight"
+
+        android:gravity="end"
+        android:paddingStart="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorLight"

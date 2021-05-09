@@ -11,13 +11,16 @@
         android:id="@+id/cameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
         android:background="@drawable/buttonstyle"
         android:text="ReflorestAR"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.072" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -32,5 +35,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="ReflorestAR"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="360dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et lectus sem. Phasellus at ipsum purus. Proin a sapien ac neque euismod laoreet eu sed diam. Quisque odio est, pulvinar in molestie tincidunt, faucibus sed nibh. Fusce aliquam ipsum a viverra consectetur. Cras sit amet viverra erat. Aliquam faucibus sit amet quam vel scelerisque. Integer dolor sem, accumsan in tempor vel, vestibulum ornare ipsum. Nam eu dui iaculis, eleifend ante at, consequat diam."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
