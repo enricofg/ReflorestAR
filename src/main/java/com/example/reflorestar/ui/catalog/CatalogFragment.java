@@ -3,6 +3,7 @@ package com.example.reflorestar.ui.catalog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CatalogFragment extends Fragment {
 
@@ -38,6 +45,22 @@ public class CatalogFragment extends Fragment {
         catalogViewModel =
                 new ViewModelProvider(this).get(CatalogViewModel.class);
         View root = inflater.inflate(R.layout.fragment_catalog, container, false);
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference trees = mDatabase.child("trees");
+
+        trees.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of trees in datasnapshot
+                        getTrees(dataSnapshot, root);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
 
         searchText = root.findViewById(R.id.catalogSearch);
         Editable editText = searchText.getEditText().getText();
@@ -53,51 +76,31 @@ public class CatalogFragment extends Fragment {
             searchText.getEditText().setText("");
         });*/
 
+        return root;
+    }
+
+    private void getTrees(DataSnapshot dataSnapshot, View root) {
         listView = root.findViewById(R.id.resultList);
 
-        final ArrayList<HashMap<String,Object>> list = new ArrayList<HashMap<String, Object>>();
+        ArrayList<String> trees = (ArrayList<String>) dataSnapshot.getValue();
 
-        HashMap<String,Object> map1 = new HashMap<String,Object>();
-        map1.put("Image",R.drawable.ic_launcher_background);
-        map1.put("FirstLastName", "FirstLastName 1");
-        map1.put("Descriptions","Descriptions 1 Descriptions 1 Descriptions 1 Descriptions 1 Descriptions 1 Descriptions 1 Descriptions 1 Descriptions 1");
-        map1.put("Params1","Params1 1");
-        map1.put("Params2","Params2 1");
-        map1.put("Params3","Params3 1");
-        list.add(map1);
+        final ArrayList<HashMap<String,Object>> catalogResult = new ArrayList<>();
+        for (Object tree : trees) {
+            catalogResult.add((HashMap<String, Object>) tree);
+            Log.e("class:", tree.getClass().toString());
+        }
 
-        HashMap<String,Object> map2 = new HashMap<String,Object>();
-        map2.put("Image",R.drawable.ic_launcher_foreground);
-        map2.put("FirstLastName","FirstLastName 2");
-        map2.put("Descriptions","Descriptions 2 Descriptions 2 Descriptions 2 Descriptions 2 Descriptions 2 Descriptions 2 Descriptions 2 Descriptions 2");
-        map2.put("Params1","Params1 2");
-        map2.put("Params2","Params2 2");
-        map2.put("Params3","Params3 2");
-        list.add(map2);
-
-        HashMap<String,Object> map3 = new HashMap<String,Object>();
-        map3.put("Image",R.drawable.ic_home_black_24dp);
-        map3.put("FirstLastName","FirstLastName 3");
-        map3.put("Descriptions","Descriptions 3 Descriptions 3 Descriptions 3 Descriptions 3 Descriptions 3 Descriptions 3 Descriptions 3 Descriptions 3");
-        map3.put("Params1","Params1 3");
-        map3.put("Params2","Params2 3");
-        map3.put("Params3","Params3 3");
-        list.add(map3);
-
-        adapter = new CustomAdapter(root.getContext(),list);
+        adapter = new CustomAdapter(root.getContext(),catalogResult);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            String firstLastName = list.get(position).get("FirstLastName").toString();
-            String descriptions = list.get(position).get("Descriptions").toString();
+            String firstLastName = catalogResult.get(position).get("common_name").toString();
+            String descriptions = catalogResult.get(position).get("latin_name").toString();
+            String tree_id = catalogResult.get(position).get("id").toString();
 
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.catalog_container, new CatalogItemFragment(firstLastName, descriptions)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
-
-            //Toast.makeText(root.getContext(),list.get(position).get("FirstLastName").toString(),Toast.LENGTH_SHORT).show();
+            fm.beginTransaction().replace(R.id.catalog_container, new CatalogItemFragment(firstLastName, descriptions, tree_id)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
         });
-
-        return root;
     }
 
     class CustomAdapter extends BaseAdapter {
@@ -131,22 +134,24 @@ public class CatalogFragment extends Fragment {
                 holder =new ViewHolder();
                 convertView = LayoutInflater.from(context).inflate(R.layout.list_item, null);
                 holder.imgIcon = convertView.findViewById(R.id.imgIcon);
-                holder.txtFirstLastName = convertView.findViewById(R.id.txtFirstLastName);
-                holder.txtDescription = convertView.findViewById(R.id.txtDescription);
-                holder.txtParams1 = convertView.findViewById(R.id.txtParams1);
-                holder.txtParams2 = convertView.findViewById(R.id.txtParams2);
-                holder.txtParams3 = convertView.findViewById(R.id.txtParams3);
+                holder.txtCommonName = convertView.findViewById(R.id.txtCommonName);
+                holder.txtLatinName = convertView.findViewById(R.id.txtLatinName);
+                //holder.txtDescription = convertView.findViewById(R.id.txtDescription);
+                holder.txtMinHeight = convertView.findViewById(R.id.txtMinHeight);
+                holder.txtSpaceBetween = convertView.findViewById(R.id.txtSpaceBetween);
+                holder.txtMaxHeight = convertView.findViewById(R.id.txtMaxHeight);
                 convertView.setTag(holder);
             }else{
                 holder = (ViewHolder)convertView.getTag();
             }
 
-            holder.imgIcon.setImageResource((Integer) data.get(position).get("Image"));
-            holder.txtFirstLastName.setText(data.get(position).get("FirstLastName").toString());
-            holder.txtDescription.setText(data.get(position).get("Descriptions").toString());
-            holder.txtParams1.setText(data.get(position).get("Params1").toString());
-            holder.txtParams2.setText(data.get(position).get("Params2").toString());
-            holder.txtParams3.setText(data.get(position).get("Params3").toString());
+            //holder.imgIcon.setImageResource((Integer) data.get(position).get("Image"));
+            holder.txtCommonName.setText(data.get(position).get("common_name").toString());
+            holder.txtLatinName.setText(data.get(position).get("latin_name").toString());
+            //holder.txtDescription.setText(data.get(position).get("Descriptions").toString());
+            holder.txtMinHeight.setText(data.get(position).get("min_height").toString());
+            holder.txtSpaceBetween.setText(data.get(position).get("max_height").toString());
+            holder.txtMaxHeight.setText(data.get(position).get("space_between").toString());
 
 
             return convertView;
@@ -154,12 +159,12 @@ public class CatalogFragment extends Fragment {
 
         class ViewHolder{
             ImageView imgIcon;
-            TextView txtFirstLastName;
-            TextView txtDescription;
-            TextView txtParams1;
-            TextView txtParams2;
-            TextView txtParams3;
+            TextView txtCommonName;
+            TextView txtLatinName;
+            //TextView txtDescription;
+            TextView txtMinHeight;
+            TextView txtMaxHeight;
+            TextView txtSpaceBetween;
         }
     }
-
 }

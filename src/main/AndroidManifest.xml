@@ -43,7 +43,8 @@
         <activity
             android:name=".MainActivity"
             android:label="ReflorestAR"
-            android:windowSoftInputMode="adjustNothing">
+            android:windowSoftInputMode="adjustNothing"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -53,7 +54,8 @@
         <activity
             android:name=".CameraActivity"
             android:label="CameraAR"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing"
+            android:screenOrientation="portrait"></activity>
 
         <meta-data
             android:name="com.google.ar.core"

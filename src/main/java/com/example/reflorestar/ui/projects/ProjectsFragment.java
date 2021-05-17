@@ -126,11 +126,11 @@ public class ProjectsFragment extends Fragment {
                 holder =new ViewHolder();
                 convertView = LayoutInflater.from(context).inflate(R.layout.list_item, null);
                 holder.imgIcon = convertView.findViewById(R.id.imgIcon);
-                holder.txtFirstLastName = convertView.findViewById(R.id.txtFirstLastName);
+                holder.txtFirstLastName = convertView.findViewById(R.id.txtCommonName);
                 holder.txtDescription = convertView.findViewById(R.id.txtDescription);
-                holder.txtParams1 = convertView.findViewById(R.id.txtParams1);
-                holder.txtParams2 = convertView.findViewById(R.id.txtParams2);
-                holder.txtParams3 = convertView.findViewById(R.id.txtParams3);
+                holder.txtParams1 = convertView.findViewById(R.id.txtMinHeight);
+                holder.txtParams2 = convertView.findViewById(R.id.txtMaxHeight);
+                holder.txtParams3 = convertView.findViewById(R.id.txtSpaceBetween);
                 convertView.setTag(holder);
             }else{
                 holder = (ViewHolder)convertView.getTag();

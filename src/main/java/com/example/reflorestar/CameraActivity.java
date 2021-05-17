@@ -24,7 +24,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
-    private GestureDetector gestureDetector;
+    //private GestureDetector gestureDetector;
     private Button closeButton;
     private Button pineTreeButton;
     private Button elmTreeButton;
@@ -64,14 +64,13 @@ public class CameraActivity extends AppCompatActivity {
         setUpElmTreeModel();
         setUpPlane();
 
-        View viewCamera = findViewById(R.id.modelOptions);
+        /*View viewCamera = findViewById(R.id.modelOptions);
         gestureDetector = new GestureDetector(this, new MyGestureListener());
-        viewCamera.setOnTouchListener(touchListener);
-
+        viewCamera.setOnTouchListener(touchListener);*/
     }
 
     private void setUpElmTreeModel() {
-        ModelRenderable.builder().setSource(this, R.raw.elmtree)
+        ModelRenderable.builder().setSource(this, R.raw.pinus_sylvestris)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(throwable -> {
@@ -106,7 +105,7 @@ public class CameraActivity extends AppCompatActivity {
         node.select();
     }
 
-    View.OnTouchListener touchListener = new View.OnTouchListener() {
+    /*View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             return gestureDetector.onTouchEvent(event);
@@ -143,7 +142,7 @@ public class CameraActivity extends AppCompatActivity {
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2,
                                float velocityX, float velocityY) {
-            /*float middle = pineTreeButton.getX();
+            float middle = pineTreeButton.getX();
             float left = elmTreeButton.getX();
             float right = thirdButton.getX();
 
@@ -168,9 +167,9 @@ public class CameraActivity extends AppCompatActivity {
                     // start right increment
                     //Toast.makeText(CameraActivity.this, "Left", Toast.LENGTH_SHORT).show();
                 }
-            }*/
+            }
 
             return true;
         }
-    }
+    }*/
 }

@@ -22,10 +22,12 @@ public class CatalogItemFragment extends Fragment {
     private Button backButton;
     private String mParam1;
     private String mParam2;
+    private String mParam3;
 
-    public CatalogItemFragment(String param1, String param2) {
+    public CatalogItemFragment(String param1, String param2, String param3) {
         mParam1 = param1;
         mParam2 = param2;
+        mParam3 = param3;
     }
 
     @Override
@@ -40,9 +42,11 @@ public class CatalogItemFragment extends Fragment {
 
         TextView textParam1 = root.findViewById(R.id.textParam1);
         TextView textParam2 = root.findViewById(R.id.textParam2);
+        TextView textParam3 = root.findViewById(R.id.textParam3);
 
         textParam1.setText(this.mParam1);
         textParam2.setText(this.mParam2);
+        textParam3.setText(this.mParam3);
 
         backButton = (Button) root.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {

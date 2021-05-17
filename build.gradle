@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.ar.sceneform.plugin'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -33,6 +35,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.firebase:firebase-database:19.5.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
@@ -48,9 +51,22 @@ task wrapper(type: Wrapper){
     gradleVersion = '2.14.1'
 }
 
-apply plugin: 'com.google.ar.sceneform.plugin'
+task prepareKotlinBuildScriptModel(){
 
-sceneform.asset('sampledata/elmtree.OBJ',
+}
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.gms:google-services:4.3.5'
+    }
+}
+
+apply plugin: 'com.google.ar.sceneform.plugin'
+/*sceneform.asset('sampledata/elmtree.OBJ',
         'default',
         'sampledata/elmtree.sfa',
         'src/main/res/raw/elmtree')
@@ -59,3 +75,13 @@ sceneform.asset('sampledata/pinetree.obj',
         'default',
         'sampledata/pinetree.sfa',
         'src/main/res/raw/pinetree')
+
+sceneform.asset('sampledata/willow.obj',
+        'default',
+        'sampledata/willow.sfa',
+        'src/main/res/raw/willow')
+
+sceneform.asset('sampledata/pinus_sylvestris.obj',
+        'default',
+        'sampledata/pinus_sylvestris.sfa',
+        'src/main/res/raw/pinus_sylvestris')*/
