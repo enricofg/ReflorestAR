@@ -5,7 +5,7 @@
     android:id="@+id/catalog_container"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#E8E4DA"
+    android:background="@color/colorLight"
     tools:context=".ui.catalog.CatalogFragment">
 
     <TextView
@@ -26,7 +26,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="350dp"
         android:layout_height="70dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

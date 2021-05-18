@@ -25,7 +25,7 @@
         android:id="@+id/resultList"
         android:layout_width="351dp"
         android:layout_height="543dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"

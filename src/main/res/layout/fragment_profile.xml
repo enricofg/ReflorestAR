@@ -39,13 +39,16 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/imageUser"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="45dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_launcher_foreground" />
 
                 <TextView
+                    android:id="@+id/txtName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -79,14 +82,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Parameter1"
+                            android:text="@string/title_projects"
                             android:textSize="20sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Value1"
+                            android:text="6"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -102,14 +105,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Parameter2"
+                            android:text="@string/planted_trees"
                             android:textSize="20sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Value2"
+                            android:text="17"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -125,14 +128,15 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Parameter3"
+                            android:text="@string/user_type"
                             android:textSize="20sp" />
 
                         <TextView
+                            android:id="@+id/paramReforestedArea"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Value3"
+                            android:text="Admin"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -153,7 +157,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:orientation="horizontal"
-                android:paddingLeft="25dp">
+                android:paddingLeft="25dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="36dp"
@@ -174,7 +179,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 android:orientation="horizontal"
-                android:paddingLeft="25dp">
+                android:paddingLeft="25dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="36dp"
@@ -203,6 +209,7 @@
                     android:src="@drawable/baseline_face_24" />
 
                 <TextView
+                    android:id="@+id/txtEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -218,7 +225,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="35dp"
             android:background="@drawable/buttonstyle"
-            android:text="Logout?"
+            android:text="Logout"
             android:textColor="#fff" />
     </LinearLayout>
 

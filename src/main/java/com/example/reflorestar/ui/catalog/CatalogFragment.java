@@ -3,7 +3,6 @@ package com.example.reflorestar.ui.catalog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +26,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CatalogFragment extends Fragment {
 
@@ -63,12 +63,13 @@ public class CatalogFragment extends Fragment {
                 });
 
         searchText = root.findViewById(R.id.catalogSearch);
-        Editable editText = searchText.getEditText().getText();
+        AtomicReference<Editable> editText = new AtomicReference<>(searchText.getEditText().getText());
 
         searchButton = root.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(view -> {
             if(!editText.toString().matches("")){
-                Toast.makeText(root.getContext(), editText, Toast.LENGTH_SHORT).show();
+                editText.set(searchText.getEditText().getText());
+                Toast.makeText(root.getContext(), editText.get(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -87,7 +88,7 @@ public class CatalogFragment extends Fragment {
         final ArrayList<HashMap<String,Object>> catalogResult = new ArrayList<>();
         for (Object tree : trees) {
             catalogResult.add((HashMap<String, Object>) tree);
-            Log.e("class:", tree.getClass().toString());
+            //Log.e("class:", tree.getClass().toString());
         }
 
         adapter = new CustomAdapter(root.getContext(),catalogResult);
@@ -141,7 +142,7 @@ public class CatalogFragment extends Fragment {
                 holder.txtLatinName = convertView.findViewById(R.id.txtLatinName);
                 //holder.txtDescription = convertView.findViewById(R.id.txtDescription);
                 holder.txtMinHeight = convertView.findViewById(R.id.txtMinHeight);
-                holder.txtSpaceBetween = convertView.findViewById(R.id.txtSpaceBetween);
+                holder.txtSpaceBetween = convertView.findViewById(R.id.txtMinDistance);
                 holder.txtMaxHeight = convertView.findViewById(R.id.txtMaxHeight);
                 convertView.setTag(holder);
             }else{
@@ -152,9 +153,10 @@ public class CatalogFragment extends Fragment {
             holder.txtCommonName.setText(data.get(position).get("common_name").toString());
             holder.txtLatinName.setText(data.get(position).get("latin_name").toString());
             //holder.txtDescription.setText(data.get(position).get("Descriptions").toString());
-            holder.txtMinHeight.setText(data.get(position).get("min_height").toString());
-            holder.txtSpaceBetween.setText(data.get(position).get("max_height").toString());
-            holder.txtMaxHeight.setText(data.get(position).get("space_between").toString());
+            holder.txtMinHeight.setText(data.get(position).get("min_height").toString()+"m");
+            holder.txtSpaceBetween.setText(data.get(position).get("max_height").toString()+"m");
+            holder.txtMaxHeight.setText(data.get(position).get("space_between").toString()+"m");
+            Picasso.get().load(data.get(position).get("photo").toString()).into(holder.imgIcon);
 
 
             return convertView;

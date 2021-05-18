@@ -7,10 +7,15 @@
     <string name="title_projects">Projects</string>
     <string name="search">Search</string>
     <string name="example">Example</string>
+    <string name="availability">Availability</string>
+    <string name="status">Status</string>
     <string name="min_dist">Minimum distance</string>
     <string name="min_height">Minimum height</string>
     <string name="max_height">Maximum height</string>
     <string name="load_error">Tree image is downloading.</string>
+    <string name="planted_trees">Planted trees</string>
+    <string name="reforested_area">Reforested area</string>
+    <string name="user_type">User type</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

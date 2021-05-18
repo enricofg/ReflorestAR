@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.reflorestar.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 
@@ -51,7 +52,8 @@ public class CatalogItemFragment extends Fragment {
 
         fragmentContainer = root.findViewById(R.id.fragment_container);
 
-        new DownloadImageFromInternet((ImageView) root.findViewById(R.id.imageView)).execute(this.paramImageUrl);
+        //new DownloadImageFromInternet((ImageView) root.findViewById(R.id.imageView)).execute(this.paramImageUrl);
+        Picasso.get().load(this.paramImageUrl).into((ImageView) root.findViewById(R.id.imageView));
 
         TextView commonName = root.findViewById(R.id.commonName);
         TextView minHeight = root.findViewById(R.id.textParamMinHeight);
@@ -62,7 +64,6 @@ public class CatalogItemFragment extends Fragment {
         minHeight.setText(this.paramMinHeight+"m");
         maxHeight.setText(this.paramMaxHeight+"m");
         minDist.setText(this.paramMinDistance+"m");
-
 
         backButton = (Button) root.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {
@@ -79,7 +80,7 @@ public class CatalogItemFragment extends Fragment {
         fragmentContainer.removeAllViews();
     }
 
-    private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
         ImageView imageView;
         public DownloadImageFromInternet(ImageView imageView) {
             this.imageView=imageView;
@@ -101,6 +102,6 @@ public class CatalogItemFragment extends Fragment {
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
-    }
+    }*/
 }
 
