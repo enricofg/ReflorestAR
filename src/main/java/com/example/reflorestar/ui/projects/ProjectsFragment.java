@@ -2,6 +2,7 @@ package com.example.reflorestar.ui.projects;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
@@ -20,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,13 +33,14 @@ public class ProjectsFragment extends Fragment {
     private ProjectsViewModel projectsViewModel;
     private ListView listView;
     private CustomAdapter adapter;
+    DatabaseReference mDatabase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         projectsViewModel =
                 new ViewModelProvider(this).get(ProjectsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_projects, container, false);
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference projects = mDatabase.child("projects");
 
         projects.addListenerForSingleValueEvent(
@@ -63,22 +68,30 @@ public class ProjectsFragment extends Fragment {
         final ArrayList<HashMap<String,Object>> projectsResult = new ArrayList<>();
         for (Object project : projects) {
             projectsResult.add((HashMap<String, Object>) project);
-            //Log.e("class:", project.getClass().toString());
         }
 
         adapter = new CustomAdapter(root.getContext(),projectsResult);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            /*String commonName = projectsResult.get(position).get("common_name").toString();
-            String minHeight = projectsResult.get(position).get("min_height").toString();
-            String maxHeight = projectsResult.get(position).get("max_height").toString();
-            String minDist = projectsResult.get(position).get("space_between").toString();
-            String tree_id = projectsResult.get(position).get("id").toString();
-            String imageUrl = projectsResult.get(position).get("photo").toString();
+            String projectName = projectsResult.get(position).get("full_name").toString();
+            String description = projectsResult.get(position).get("description").toString();
+            String availability = projectsResult.get(position).get("availability").toString();
+            String status = projectsResult.get(position).get("status").toString();
+            String projectId = projectsResult.get(position).get("id").toString();
+
+            DataSnapshot projectOwner = dataSnapshot.child("users").child(projectsResult.get(position).get("id_owner").toString());
+            HashMap<String, Object> user = (HashMap<String, Object>) projectOwner.getValue();
+            Log.e("user:", user.toString());
+
+            //String ownerName = user.get("full_name").toString();
+            String ownerName = "";
+            //String email = user.get("email").toString();
+            String email = "";
+            //Picasso.get().load(user.get("photo").toString()).into(paramUserImage);
 
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.catalog_container, new CatalogItemFragment(commonName, minHeight, maxHeight, minDist, tree_id, imageUrl)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();*/
+            fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, availability, status, projectId, ownerName, email)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
         });
     }
 

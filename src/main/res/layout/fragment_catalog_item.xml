@@ -129,6 +129,7 @@
                             android:id="@+id/imageView2"
                             android:layout_width="match_parent"
                             android:layout_height="36dp"
+                            android:layout_marginBottom="4dp"
                             android:layout_weight="1"
                             android:src="@drawable/baseline_unfold_less_24" />
 
@@ -136,6 +137,7 @@
                             android:id="@+id/textViewMinHeight"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="@string/min_height"
@@ -165,6 +167,7 @@
                             android:id="@+id/imageView3"
                             android:layout_width="match_parent"
                             android:layout_height="36dp"
+                            android:layout_marginBottom="4dp"
                             android:layout_weight="1"
                             android:src="@drawable/baseline_unfold_more_24" />
 
@@ -172,6 +175,7 @@
                             android:id="@+id/textViewMaxHeight"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="@string/max_height"
@@ -200,6 +204,7 @@
                             android:id="@+id/imageView4"
                             android:layout_width="match_parent"
                             android:layout_height="36dp"
+                            android:layout_marginBottom="4dp"
                             android:layout_weight="1"
                             android:src="@drawable/baseline_sync_alt_24" />
 
@@ -207,6 +212,7 @@
                             android:id="@+id/textViewMinDist"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="@string/min_dist"
@@ -265,7 +271,8 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="6dp"
                 android:layout_marginEnd="20dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et lectus sem. Phasellus at ipsum purus. Proin a sapien ac neque euismod." />
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et lectus sem. Phasellus at ipsum purus. Proin a sapien ac neque euismod."
+                android:textColor="#DC2C282C" />
         </LinearLayout>
 
     </ScrollView>

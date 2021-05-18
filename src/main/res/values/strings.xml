@@ -9,6 +9,9 @@
     <string name="example">Example</string>
     <string name="availability">Availability</string>
     <string name="status">Status</string>
+    <string name="description">Description:</string>
+    <string name="project_owner">Project owner:</string>
+    <string name="owner_email">Owner email:</string>
     <string name="min_dist">Minimum distance</string>
     <string name="min_height">Minimum height</string>
     <string name="max_height">Maximum height</string>

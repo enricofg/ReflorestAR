@@ -47,14 +47,13 @@ public class ProfileFragment extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of trees in datasnapshot
                         HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
 
                         paramName.setText(user.get("full_name").toString());
                         paramEmail.setText(user.get("email").toString());
                         Picasso.get().load(user.get("photo").toString()).into(paramUserImage);
 
-                        Log.e("class:", user.toString());
+                        //Log.e("user:", user.toString());
                     }
 
                     @Override
