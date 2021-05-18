@@ -8,7 +8,7 @@
     tools:context=".ui.projects.ProjectsFragment">
 
     <TextView
-        android:id="@+id/projectsTitle"
+        android:id="@+id/catalogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
@@ -29,6 +29,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/projectsTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/catalogTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

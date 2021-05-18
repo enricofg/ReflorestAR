@@ -94,12 +94,15 @@ public class CatalogFragment extends Fragment {
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            String firstLastName = catalogResult.get(position).get("common_name").toString();
-            String descriptions = catalogResult.get(position).get("latin_name").toString();
+            String commonName = catalogResult.get(position).get("common_name").toString();
+            String minHeight = catalogResult.get(position).get("min_height").toString();
+            String maxHeight = catalogResult.get(position).get("max_height").toString();
+            String minDist = catalogResult.get(position).get("space_between").toString();
             String tree_id = catalogResult.get(position).get("id").toString();
+            String imageUrl = catalogResult.get(position).get("photo").toString();
 
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.catalog_container, new CatalogItemFragment(firstLastName, descriptions, tree_id)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+            fm.beginTransaction().replace(R.id.catalog_container, new CatalogItemFragment(commonName, minHeight, maxHeight, minDist, tree_id, imageUrl)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
         });
     }
 

@@ -9,10 +9,10 @@
     tools:context=".ui.catalog.CatalogFragment">
 
     <TextView
-        android:id="@+id/projectsTitle"
+        android:id="@+id/catalogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="36dp"
         android:text="@string/title_catalog"
         android:textAllCaps="true"
@@ -30,7 +30,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/projectsTitle">
+        app:layout_constraintTop_toBottomOf="@+id/catalogTitle">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/catalogSearch"
