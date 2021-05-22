@@ -62,13 +62,6 @@ public class ProjectsFragment extends Fragment {
     private void getProjects(DataSnapshot dataSnapshot, View root) {
         listView = root.findViewById(R.id.resultList);
 
-        /*ArrayList<String> projects = (ArrayList<String>) dataSnapshot.getValue();
-
-        final ArrayList<HashMap<String,Object>> projectsResult = new ArrayList<>();
-        for (Object project : projects) {
-            projectsResult.add((HashMap<String, Object>) project);
-        }*/
-
         try {
             ArrayList<HashMap<String, Object>> projectsResult = new ArrayList<>();
             HashMap<String, Object> projects = (HashMap<String, Object>) dataSnapshot.getValue();

@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.reflorestar.R;
-import com.example.reflorestar.ui.catalog.CatalogFragment;
 import com.squareup.picasso.Picasso;
 
 public class ProjectsItemFragment extends Fragment {
@@ -45,7 +44,7 @@ public class ProjectsItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_projects_item, container, false);
 
-        fragmentContainer = root.findViewById(R.id.fragment_container);
+        fragmentContainer = root.findViewById(R.id.account_home_container);
 
         TextView projectName = root.findViewById(R.id.projectName);
         TextView description = root.findViewById(R.id.projectDescription);
@@ -61,7 +60,7 @@ public class ProjectsItemFragment extends Fragment {
         status.setText(this.paramStatus);
         ownerName.setText(this.paramOwnerName);
         ownerEmail.setText(this.paramOwnerEmail);
-        Picasso.get().load(paramPhoto).into(ownerPhoto);
+        Picasso.get().load(paramPhoto).error(R.drawable.ic_user).into(ownerPhoto);
 
         backButton = (Button) root.findViewById(R.id.backButtonProj);
         backButton.setOnClickListener(v -> {
@@ -73,7 +72,7 @@ public class ProjectsItemFragment extends Fragment {
 
     private void returnToProjects(ConstraintLayout fragmentContainer) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.fragment_container, new ProjectsFragment()).addToBackStack( "project_item" ).commit();
+        fm.beginTransaction().replace(R.id.account_home_container, new ProjectsFragment()).addToBackStack( "project_item" ).commit();
         //fragmentContainer.setVisibility(View.INVISIBLE);
         fragmentContainer.removeAllViews();
     }

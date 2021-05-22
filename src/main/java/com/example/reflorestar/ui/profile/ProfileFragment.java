@@ -1,5 +1,7 @@
 package com.example.reflorestar.ui.profile;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +31,8 @@ import java.util.HashMap;
 public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
+    private ConstraintLayout fragmentContainer;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -35,12 +40,14 @@ public class ProfileFragment extends Fragment {
 
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        fragmentContainer = root.findViewById(R.id.profile_container);
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
         DatabaseReference user = mDatabase.child("joanasanches");
 
         TextView paramName = root.findViewById(R.id.txtName);
         TextView paramEmail = root.findViewById(R.id.txtEmail);
         ImageView paramUserImage = root.findViewById(R.id.imageUser);
+        Button buttonLogout = root.findViewById(R.id.buttonLogout);
 
         user.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -54,7 +61,7 @@ public class ProfileFragment extends Fragment {
                             HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
                             paramName.setText(user.get("full_name").toString());
                             paramEmail.setText(user.get("email").toString());
-                            Picasso.get().load(user.get("photo").toString()).into(paramUserImage);
+                            Picasso.get().load(user.get("photo").toString()).error(R.drawable.ic_user).into(paramUserImage);
                         }
                         //Log.e("user:", user.toString());
                     }
@@ -65,14 +72,16 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
-        /*final TextView textView = root.findViewById(R.id.text_profile);
-        profileViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });*/
+        buttonLogout.setOnClickListener(v -> {
+            logout(fragmentContainer);
+        });
 
         return root;
+    }
+
+    private void logout(ConstraintLayout fragmentContainer) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.beginTransaction().replace(R.id.profile_container, new AccountHomeFragment()).addToBackStack( "profile_page" ).commit();
+        fragmentContainer.removeAllViews();
     }
 }

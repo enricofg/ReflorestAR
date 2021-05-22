@@ -43,7 +43,7 @@ public class CatalogItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_catalog_item, container, false);
 
-        fragmentContainer = root.findViewById(R.id.fragment_container);
+        fragmentContainer = root.findViewById(R.id.account_home_container);
 
         //new DownloadImageFromInternet((ImageView) root.findViewById(R.id.imageView)).execute(this.paramImageUrl);
         Picasso.get().load(this.paramImageUrl).into((ImageView) root.findViewById(R.id.imageView));
@@ -68,7 +68,7 @@ public class CatalogItemFragment extends Fragment {
 
     private void returnToCatalog(ConstraintLayout fragmentContainer) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.fragment_container, new CatalogFragment()).addToBackStack( "catalog_item" ).commit();
+        fm.beginTransaction().replace(R.id.account_home_container, new CatalogFragment()).addToBackStack( "catalog_item" ).commit();
         //fragmentContainer.setVisibility(View.INVISIBLE);
         fragmentContainer.removeAllViews();
     }

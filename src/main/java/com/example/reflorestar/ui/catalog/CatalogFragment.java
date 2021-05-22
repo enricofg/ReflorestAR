@@ -60,9 +60,6 @@ public class CatalogFragment extends Fragment {
         searchButton.setOnClickListener(view -> {
             if (!editText.toString().isEmpty()) {
                 editText.set(searchText.getEditText().getText());
-                //Toast.makeText(root.getContext(), editText.get().toString(), Toast.LENGTH_SHORT).show();
-                //Log.e("Hello:", editText.get().toString());
-
                 String searchQuery = editText.get().toString();
 
                 //get query
@@ -124,15 +121,6 @@ public class CatalogFragment extends Fragment {
             try {
                 ArrayList<HashMap<String, Object>> catalogResult = new ArrayList<>();
                 HashMap<String, Object> trees = (HashMap<String, Object>) dataSnapshot.getValue();
-                //ArrayList<String> listTrees = (HashMap<String, Object>) dataSnapshot.getValue();
-                /*for (Object tree : listTrees) {
-                    if (tree != null) {
-                        catalogResult.add((HashMap<String, Object>) tree);
-                    }
-                    //Log.e("class:", tree.getClass().toString());
-                }*/
-                //listTrees.forEach((key,value) -> Log.e("Item #"+key, "Values: "+value.toString()));
-
                 trees.forEach((key,value) -> catalogResult.add((HashMap<String, Object>) value));
 
                 adapter = new ListItemAdapter(root.getContext(), catalogResult);
