@@ -2,12 +2,10 @@ package com.example.reflorestar.ui.projects;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +29,8 @@ public class ProjectsFragment extends Fragment {
 
     private ProjectsViewModel projectsViewModel;
     private ListView listView;
-    private CustomAdapter adapter;
-    DatabaseReference mDatabase;
+    private ListItemAdapter adapter;
+    DatabaseReference mDatabase, projects, users;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,7 +38,8 @@ public class ProjectsFragment extends Fragment {
                 new ViewModelProvider(this).get(ProjectsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_projects, container, false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference projects = mDatabase.child("projects");
+        projects = mDatabase.child("projects");
+        users = mDatabase.child("users");
 
         projects.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -70,7 +68,7 @@ public class ProjectsFragment extends Fragment {
             projectsResult.add((HashMap<String, Object>) project);
         }
 
-        adapter = new CustomAdapter(root.getContext(),projectsResult);
+        adapter = new ListItemAdapter(root.getContext(),projectsResult);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -80,26 +78,35 @@ public class ProjectsFragment extends Fragment {
             String status = projectsResult.get(position).get("status").toString();
             String projectId = projectsResult.get(position).get("id").toString();
 
-            DataSnapshot projectOwner = dataSnapshot.child("users").child(projectsResult.get(position).get("id_owner").toString());
-            HashMap<String, Object> user = (HashMap<String, Object>) projectOwner.getValue();
-            Log.e("user:", user.toString());
 
-            //String ownerName = user.get("full_name").toString();
-            String ownerName = "";
-            //String email = user.get("email").toString();
-            String email = "";
-            //Picasso.get().load(user.get("photo").toString()).into(paramUserImage);
+            DatabaseReference projectOwner = users.child(projectsResult.get(position).get("id_owner").toString());
+            projectOwner.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
 
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, availability, status, projectId, ownerName, email)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+                    String ownerName = user.get("full_name").toString();
+                    String email = user.get("email").toString();
+                    String photo = user.get("photo").toString();
+                    //Log.e("user:", user.toString());
+
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, availability, status, projectId, ownerName, email, photo)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         });
     }
 
-    class CustomAdapter extends BaseAdapter {
+    class ListItemAdapter extends BaseAdapter {
         private Context context;
         private ArrayList<HashMap<String,Object>> data;
 
-        public CustomAdapter(Context context,ArrayList<HashMap<String,Object>> data){
+        public ListItemAdapter(Context context, ArrayList<HashMap<String,Object>> data){
             this.context = context;
             this.data = data;
         }
@@ -138,7 +145,6 @@ public class ProjectsFragment extends Fragment {
             holder.txtDescription.setText(data.get(position).get("description").toString());
             holder.txtAvailability.setText(data.get(position).get("availability").toString());
             holder.txtStatus.setText(data.get(position).get("status").toString());
-
 
             return convertView;
         }

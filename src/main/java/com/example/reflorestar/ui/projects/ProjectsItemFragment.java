@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -13,16 +14,17 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.reflorestar.R;
 import com.example.reflorestar.ui.catalog.CatalogFragment;
+import com.squareup.picasso.Picasso;
 
 public class ProjectsItemFragment extends Fragment {
 
     private Button backButton;
-    private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerEmail;
+    private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerEmail, paramPhoto;
     private int paramProjectId;
     private ConstraintLayout fragmentContainer;
     private View root;
 
-    public ProjectsItemFragment(String projectName, String description, String availability, String status, String projectId, String ownerName, String ownerEmail) {
+    public ProjectsItemFragment(String projectName, String description, String availability, String status, String projectId, String ownerName, String ownerEmail, String photo) {
         paramProjectName = projectName;
         paramDescription = description;
         paramAvailability = availability;
@@ -30,6 +32,7 @@ public class ProjectsItemFragment extends Fragment {
         paramProjectId = Integer.parseInt(projectId);
         paramOwnerName = ownerName;
         paramOwnerEmail = ownerEmail;
+        paramPhoto = photo;
     }
 
     @Override
@@ -50,6 +53,7 @@ public class ProjectsItemFragment extends Fragment {
         TextView status = root.findViewById(R.id.paramStatus);
         TextView ownerName = root.findViewById(R.id.paramProjectOwner);
         TextView ownerEmail = root.findViewById(R.id.paramOwnerEmail);
+        ImageView ownerPhoto = root.findViewById(R.id.thumbnailPicture);
 
         projectName.setText(this.paramProjectName);
         description.setText(this.paramDescription);
@@ -57,6 +61,7 @@ public class ProjectsItemFragment extends Fragment {
         status.setText(this.paramStatus);
         ownerName.setText(this.paramOwnerName);
         ownerEmail.setText(this.paramOwnerEmail);
+        Picasso.get().load(paramPhoto).into(ownerPhoto);
 
         backButton = (Button) root.findViewById(R.id.backButtonProj);
         backButton.setOnClickListener(v -> {

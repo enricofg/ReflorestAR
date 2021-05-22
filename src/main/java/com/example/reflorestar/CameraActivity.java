@@ -70,7 +70,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void setUpElmTreeModel() {
-        ModelRenderable.builder().setSource(this, R.raw.pinus_sylvestris)
+        ModelRenderable.builder().setSource(this, R.raw.elmtree)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(throwable -> {

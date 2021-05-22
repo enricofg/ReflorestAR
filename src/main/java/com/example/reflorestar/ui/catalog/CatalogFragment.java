@@ -38,7 +38,7 @@ public class CatalogFragment extends Fragment {
     private TextInputLayout searchText;
     private Button searchButton;
     private ListView listView;
-    private CustomAdapter adapter;
+    private ListItemAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class CatalogFragment extends Fragment {
             //Log.e("class:", tree.getClass().toString());
         }
 
-        adapter = new CustomAdapter(root.getContext(),catalogResult);
+        adapter = new ListItemAdapter(root.getContext(),catalogResult);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -107,11 +107,11 @@ public class CatalogFragment extends Fragment {
         });
     }
 
-    class CustomAdapter extends BaseAdapter {
+    class ListItemAdapter extends BaseAdapter {
         private Context context;
         private ArrayList<HashMap<String,Object>> data;
 
-        public CustomAdapter(Context context,ArrayList<HashMap<String,Object>> data){
+        public ListItemAdapter(Context context, ArrayList<HashMap<String,Object>> data){
             this.context = context;
             this.data = data;
         }

@@ -20,7 +20,8 @@
             android:layout_marginBottom="4dp"
             android:text="Full name"
             android:textColor="@color/colorDark"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtDescription"
@@ -49,7 +50,8 @@
                     android:gravity="start"
                     android:text="@string/availability"
                     android:textColor="@color/colorDark"
-                    android:textSize="15.5sp" />
+                    android:textSize="15.5sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtAvailability"
@@ -72,7 +74,8 @@
                     android:gravity="start"
                     android:text="@string/status"
                     android:textColor="@color/colorDark"
-                    android:textSize="15.5sp" />
+                    android:textSize="15.5sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtStatus"
