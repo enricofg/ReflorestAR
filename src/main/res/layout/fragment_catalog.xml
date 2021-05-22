@@ -10,15 +10,17 @@
 
     <TextView
         android:id="@+id/catalogTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="36dp"
+        android:layout_marginEnd="28dp"
         android:text="@string/title_catalog"
         android:textAllCaps="true"
         android:textColor="#2C282C"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,13 +71,28 @@
 
     <ListView
         android:id="@+id/resultList"
-        android:layout_width="340dp"
+        android:layout_width="match_parent"
         android:layout_height="450dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="30dp"
         android:fadeScrollbars="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" >
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/emptySearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/resultList"
+        app:layout_constraintEnd_toEndOf="@+id/resultList"
+        app:layout_constraintStart_toStartOf="@+id/resultList"
+        app:layout_constraintTop_toTopOf="@+id/resultList" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

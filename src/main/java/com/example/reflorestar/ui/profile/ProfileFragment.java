@@ -36,23 +36,26 @@ public class ProfileFragment extends Fragment {
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference user = mDatabase.child("1");
+        DatabaseReference user = mDatabase.child("joanasanches");
 
         TextView paramName = root.findViewById(R.id.txtName);
         TextView paramEmail = root.findViewById(R.id.txtEmail);
         ImageView paramUserImage = root.findViewById(R.id.imageUser);
 
-
         user.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
+                        Log.e("dataSnapshot", String.valueOf(dataSnapshot.getValue()));
+                        if(dataSnapshot.getValue()!=null){
+                            HashMap<String, Object> userProfile = (HashMap<String, Object>) dataSnapshot.getValue();
+                            Log.e("dataSnapshot", userProfile.toString());
 
-                        paramName.setText(user.get("full_name").toString());
-                        paramEmail.setText(user.get("email").toString());
-                        Picasso.get().load(user.get("photo").toString()).into(paramUserImage);
-
+                            HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
+                            paramName.setText(user.get("full_name").toString());
+                            paramEmail.setText(user.get("email").toString());
+                            Picasso.get().load(user.get("photo").toString()).into(paramUserImage);
+                        }
                         //Log.e("user:", user.toString());
                     }
 

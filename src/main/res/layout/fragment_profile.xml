@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/colorLight"
+    android:background="@drawable/gradientbackground"
     tools:context=".ui.profile.ProfileFragment">
 
     <Button
         android:id="@+id/configButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginTop="4dp"
         android:background="#00000000"
         android:drawableStart="@drawable/baseline_settings_36"
         android:drawableTint="@color/colorLight"
@@ -36,16 +35,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="325dp"
                 android:background="@drawable/gradientbackground"
+                android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imageUser"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="45dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_launcher_foreground" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="158dp"
+                    android:layout_height="158dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="250dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        app:cardBackgroundColor="@color/colorLight"
+                        app:cardCornerRadius="250dp">
+
+                        <ImageView
+                            android:id="@+id/imageUser"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_user" />
+
+                    </androidx.cardview.widget.CardView>
+
+
+                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/txtName"
@@ -60,10 +76,12 @@
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
-                android:layout_width="380dp"
+                android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="275dp"
+                android:layout_marginEnd="10dp"
                 android:elevation="2dp">
 
                 <LinearLayout
@@ -146,10 +164,12 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="360dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="30dp"
+            android:layout_marginEnd="15dp"
             android:orientation="vertical">
 
             <LinearLayout

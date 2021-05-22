@@ -14,8 +14,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_treeiconlargemodelbg_focus" />
-                            <entry key="sourceFile" value="C:\Users\enric\Downloads\TreeIconLargeModelBG_Focus.svg" />
+                            <entry key="outputName" value="ic_user" />
+                            <entry key="sourceFile" value="C:\proj\projFinal\assets\vectors\user.svg" />
                           </map>
                         </option>
                       </PersistentState>

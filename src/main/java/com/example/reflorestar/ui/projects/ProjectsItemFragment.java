@@ -20,16 +20,16 @@ public class ProjectsItemFragment extends Fragment {
 
     private Button backButton;
     private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerEmail, paramPhoto;
-    private int paramProjectId;
+    //private int paramProjectId;
     private ConstraintLayout fragmentContainer;
     private View root;
 
-    public ProjectsItemFragment(String projectName, String description, String availability, String status, String projectId, String ownerName, String ownerEmail, String photo) {
+    public ProjectsItemFragment(String projectName, String description, String availability, String status, String ownerName, String ownerEmail, String photo) {
         paramProjectName = projectName;
         paramDescription = description;
         paramAvailability = availability;
         paramStatus = status;
-        paramProjectId = Integer.parseInt(projectId);
+        //paramProjectId = Integer.parseInt(projectId);
         paramOwnerName = ownerName;
         paramOwnerEmail = ownerEmail;
         paramPhoto = photo;
