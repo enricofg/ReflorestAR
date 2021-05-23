@@ -11,7 +11,10 @@
     <string name="status">Status</string>
     <string name="description">Description:</string>
     <string name="project_owner">Project owner:</string>
+    <string name="email">Email:</string>
     <string name="owner_email">Owner email:</string>
+    <string name="password">Password:</string>
+    <string name="confirm_password">Confirm password:</string>
     <string name="min_dist_abbr">Min. distance</string>
     <string name="min_dist">Mininum distance</string>
     <string name="min_height_abbr">Min. height</string>
@@ -25,7 +28,6 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="create_account">Create account</string>
+    <string name="create">Create</string>
     <string name="project_login_msg">To view projects, please login.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

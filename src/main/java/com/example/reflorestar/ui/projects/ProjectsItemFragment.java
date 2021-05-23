@@ -44,7 +44,7 @@ public class ProjectsItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_projects_item, container, false);
 
-        fragmentContainer = root.findViewById(R.id.account_home_container);
+        fragmentContainer = root.findViewById(R.id.project_item_container);
 
         TextView projectName = root.findViewById(R.id.projectName);
         TextView description = root.findViewById(R.id.projectDescription);
@@ -72,7 +72,7 @@ public class ProjectsItemFragment extends Fragment {
 
     private void returnToProjects(ConstraintLayout fragmentContainer) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.account_home_container, new ProjectsFragment()).addToBackStack( "project_item" ).commit();
+        fm.beginTransaction().replace(R.id.project_item_container, new ProjectsFragment()).addToBackStack( "project_item" ).commit();
         //fragmentContainer.setVisibility(View.INVISIBLE);
         fragmentContainer.removeAllViews();
     }

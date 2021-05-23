@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradientbackground"
+    android:clickable="true"
     tools:context=".ui.profile.ProfileFragment">
 
     <Button
@@ -247,8 +248,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="35dp"
             android:background="@drawable/buttonstyle"
-            android:text="Logout"
-            android:textColor="#fff" />
+            android:text="@string/logout"
+            android:textColor="@color/colorLight" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

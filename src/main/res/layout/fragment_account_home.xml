@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorLight"
+    android:clickable="true"
     tools:context=".ui.profile.AccountHomeFragment">
 
     <LinearLayout
@@ -28,7 +29,7 @@
             android:layout_marginEnd="60dp"
             android:background="@drawable/buttonstyle"
             android:text="@string/login"
-            android:textColor="#fff" />
+            android:textColor="@color/colorLight" />
 
         <Button
             android:id="@+id/buttonCreateAccount"

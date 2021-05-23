@@ -14,9 +14,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
-import com.example.reflorestar.ui.projects.ProjectsFragment;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class AccountHomeFragment extends Fragment {
 
@@ -37,7 +34,11 @@ public class AccountHomeFragment extends Fragment {
             Button buttonCreateAccount = root.findViewById(R.id.buttonCreateAccount);
 
             buttonLogin.setOnClickListener(v -> {
-                accessProfile(fragmentContainer);
+                loginPage(fragmentContainer);
+            });
+
+            buttonCreateAccount.setOnClickListener(v -> {
+                createAccount(fragmentContainer);
             });
 
             return root;
@@ -46,6 +47,18 @@ public class AccountHomeFragment extends Fragment {
         }
 
         return root;
+    }
+
+    private void loginPage(ConstraintLayout fragmentContainer) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.beginTransaction().replace(R.id.account_home_container, new AccountLoginFragment()).addToBackStack( "account_home" ).commit();
+        fragmentContainer.removeAllViews();
+    }
+
+    private void createAccount(ConstraintLayout fragmentContainer) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.beginTransaction().replace(R.id.account_home_container, new AccountCreateFragment()).addToBackStack( "account_home" ).commit();
+        fragmentContainer.removeAllViews();
     }
 
     private void accessProfile(ConstraintLayout fragmentContainer) {
