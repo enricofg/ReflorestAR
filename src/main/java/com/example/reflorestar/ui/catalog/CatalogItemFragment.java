@@ -20,16 +20,16 @@ public class CatalogItemFragment extends Fragment {
 
     private Button backButton;
     private String paramCommonName, paramMinHeight, paramMaxHeight, paramMinDistance, paramImageUrl;
-    private int paramTreeId;
+    //private int paramTreeId;
     private ConstraintLayout fragmentContainer;
     private View root;
 
-    public CatalogItemFragment(String commonName, String minHeight, String maxHeight, String minDist, String treeId, String imageUrl) {
+    public CatalogItemFragment(String commonName, String minHeight, String maxHeight, String minDist, String imageUrl) {
         paramCommonName = commonName;
         paramMinHeight = minHeight;
         paramMaxHeight = maxHeight;
         paramMinDistance = minDist;
-        paramTreeId = Integer.parseInt(treeId);
+        //paramTreeId = Integer.parseInt(treeId);
         paramImageUrl = imageUrl;
     }
 
@@ -44,8 +44,6 @@ public class CatalogItemFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_catalog_item, container, false);
 
         fragmentContainer = root.findViewById(R.id.project_item_container);
-
-        //new DownloadImageFromInternet((ImageView) root.findViewById(R.id.imageView)).execute(this.paramImageUrl);
         Picasso.get().load(this.paramImageUrl).into((ImageView) root.findViewById(R.id.imageView));
 
         TextView commonName = root.findViewById(R.id.commonName);
@@ -72,29 +70,5 @@ public class CatalogItemFragment extends Fragment {
         //fragmentContainer.setVisibility(View.INVISIBLE);
         fragmentContainer.removeAllViews();
     }
-
-    /*private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-        public DownloadImageFromInternet(ImageView imageView) {
-            this.imageView=imageView;
-            //Toast.makeText(root.getContext(),"Downloading image...",Toast.LENGTH_SHORT).show();
-        }
-        protected Bitmap doInBackground(String... urls) {
-            String imageURL=urls[0];
-            Bitmap bimage=null;
-            try {
-                InputStream in=new java.net.URL(imageURL).openStream();
-                bimage= BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Toast.makeText(root.getContext(),"Error downloading image.",Toast.LENGTH_SHORT).show();
-                Log.e("Error Message", e.getMessage());
-                e.printStackTrace();
-            }
-            return bimage;
-        }
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
-    }*/
 }
 

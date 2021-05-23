@@ -33,7 +33,6 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         fragmentContainer = root.findViewById(R.id.profile_container);
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference user = mDatabase.child("joanasanches");
+        DatabaseReference user = mDatabase.child("matiasarielol");
 
         TextView paramName = root.findViewById(R.id.txtName);
         TextView paramEmail = root.findViewById(R.id.txtEmail);

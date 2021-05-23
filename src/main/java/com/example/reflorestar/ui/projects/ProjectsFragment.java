@@ -75,10 +75,8 @@ public class ProjectsFragment extends Fragment {
                 String description = projectsResult.get(position).get("description").toString();
                 String availability = projectsResult.get(position).get("availability").toString();
                 String status = projectsResult.get(position).get("status").toString();
-                //String projectId = projectsResult.get(position).get("id").toString();
 
-
-                DatabaseReference projectOwner = usersDB.child(projectsResult.get(position).get("id_owner").toString());
+                DatabaseReference projectOwner = usersDB.child(projectsResult.get(position).get("username_owner").toString());
                 projectOwner.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
