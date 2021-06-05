@@ -4,6 +4,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.reflorestar.R;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +47,8 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         fragmentContainer = root.findViewById(R.id.profile_container);
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference user = mDatabase.child("matiasarielol");
+        DatabaseReference user = mDatabase.child("joanasanches");
+        FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
 
         TextView paramName = root.findViewById(R.id.txtName);
         TextView paramEmail = root.findViewById(R.id.txtEmail);
@@ -53,14 +60,25 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.e("dataSnapshot", String.valueOf(dataSnapshot.getValue()));
-                        if(dataSnapshot.getValue()!=null){
+                        if (dataSnapshot.getValue() != null) {
                             HashMap<String, Object> userProfile = (HashMap<String, Object>) dataSnapshot.getValue();
                             Log.e("dataSnapshot", userProfile.toString());
 
                             HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
-                            paramName.setText(user.get("full_name").toString());
-                            paramEmail.setText(user.get("email").toString());
-                            Picasso.get().load(user.get("photo").toString()).error(R.drawable.ic_user).into(paramUserImage);
+
+                            //firebase auth user data
+                            String name = userAuth.getDisplayName();
+                            String email = userAuth.getEmail();
+                            String photoUrl = userAuth.getPhotoUrl().toString();
+
+                            //paramName.setText(user.get("full_name").toString());
+                            //paramEmail.setText(user.get("email").toString());
+
+                            paramName.setText(name);
+                            paramEmail.setText(email);
+
+                            //Picasso.get().load(user.get("photo").toString()).error(R.drawable.ic_user).into(paramUserImage);
+                            Picasso.get().load(photoUrl).error(R.drawable.ic_user).into(paramUserImage);
                         }
                         //Log.e("user:", user.toString());
                     }
@@ -72,7 +90,13 @@ public class ProfileFragment extends Fragment {
                 });
 
         buttonLogout.setOnClickListener(v -> {
-            logout(fragmentContainer);
+            AuthUI.getInstance()
+                    .signOut(root.getContext())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            logout(fragmentContainer);
+                        }
+                    });
         });
 
         return root;
@@ -80,7 +104,7 @@ public class ProfileFragment extends Fragment {
 
     private void logout(ConstraintLayout fragmentContainer) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.profile_container, new AccountHomeFragment()).addToBackStack( "profile_page" ).commit();
+        fm.beginTransaction().replace(R.id.profile_container, new AccountHomeFragment()).addToBackStack("profile_page").commit();
         fragmentContainer.removeAllViews();
     }
 }

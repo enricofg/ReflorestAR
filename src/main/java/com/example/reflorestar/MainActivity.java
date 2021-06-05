@@ -39,20 +39,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+/*    @Override
     public void onBackPressed() {
         View view = this.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        /*//normal behavior
+        /*normal behavior
         int count = getSupportFragmentManager().getBackStackEntryCount();
 
         if (count == 0) {
             super.onBackPressed();
         } else {
             getSupportFragmentManager().popBackStack();
-        }*/
-    }
+        }*//*
+    }*/
 }

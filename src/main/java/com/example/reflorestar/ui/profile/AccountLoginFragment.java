@@ -1,5 +1,6 @@
 package com.example.reflorestar.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
 import com.example.reflorestar.ui.projects.ProjectsFragment;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 public class AccountLoginFragment extends Fragment {
 
@@ -34,6 +44,7 @@ public class AccountLoginFragment extends Fragment {
 
         buttonLogin.setOnClickListener(v -> {
             accessProfile(fragmentContainer);
+
         });
 
         backButton.setOnClickListener(v -> {

@@ -77,10 +77,11 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="30dp"
         android:fadeScrollbars="false"
+        android:scrollbarThumbVertical="@drawable/scrollbar_gradient"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" >
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
     </ListView>
 
