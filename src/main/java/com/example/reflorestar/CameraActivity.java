@@ -2,22 +2,22 @@ package com.example.reflorestar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.BaseArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 public class CameraActivity extends AppCompatActivity {
@@ -25,13 +25,12 @@ public class CameraActivity extends AppCompatActivity {
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
     //private GestureDetector gestureDetector;
-    private Button closeButton;
-    private Button pineTreeButton;
-    private Button elmTreeButton;
+    private Button closeButton, configButton;
+    private LinearLayout containerOptions;
+    private SeekBar sliderQuant;
+    private Button pinusPinasterButton;
+    private Button pineTree2Button;
     private Button thirdButton;
-
-    /*private static final int SWIPE_DISTANCE_THRESHOLD = 125;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 75;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,34 +42,66 @@ public class CameraActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        View cameraContainer = findViewById(R.id.layoutCamera);
         closeButton = findViewById(R.id.closeButton);
-        pineTreeButton = findViewById(R.id.buttonPineTree);
-        elmTreeButton = findViewById(R.id.buttonElmTree);
-        thirdButton = findViewById(R.id.buttonThree);
+        configButton = findViewById(R.id.configButtonCam);
+        sliderQuant = findViewById(R.id.seekBarTreeQuantity);
+        containerOptions = findViewById(R.id.containerCamOptions);
+        containerOptions.setVisibility(View.GONE);
+
+
+        pinusPinasterButton = findViewById(R.id.buttonPinusPinaster);
+        pineTree2Button = findViewById(R.id.buttonTree2);
+
 
         closeButton.setOnClickListener(view -> {
-                finish();
+            finish();
         });
 
-        pineTreeButton.setOnClickListener(view -> {
-            setUpPineTreeModel();
+        configButton.setOnClickListener(view -> {
+            Transition transition = new Fade();
+            transition.setDuration(200);
+            transition.addTarget(containerOptions);
+
+            TransitionManager.beginDelayedTransition((ViewGroup) cameraContainer, transition);
+            containerOptions.setVisibility(containerOptions.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         });
 
-        elmTreeButton.setOnClickListener(view -> {
-            setUpElmTreeModel();
+        int maxValue=sliderQuant.getMax(); // get maximum value of the Seek bar
+        Log.e("Max Value:", String.valueOf(maxValue));
+
+        sliderQuant.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int seekBarValue= sliderQuant.getProgress();
+                Log.e("Progress Value:", String.valueOf(seekBarValue));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        pinusPinasterButton.setOnClickListener(view -> {
+            setUpPinusPinasterModel();
+        });
+        pineTree2Button.setOnClickListener(view -> {
+            setUpPineTree2Model();
         });
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        setUpElmTreeModel();
+        setUpPinusPinasterModel();
         setUpPlane();
-
-        /*View viewCamera = findViewById(R.id.modelOptions);
-        gestureDetector = new GestureDetector(this, new MyGestureListener());
-        viewCamera.setOnTouchListener(touchListener);*/
     }
 
-    private void setUpElmTreeModel() {
-        ModelRenderable.builder().setSource(this, R.raw.elmtree)
+    private void setUpPinusPinasterModel() {
+        ModelRenderable.builder().setSource(this, R.raw.pinuspinaster)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(throwable -> {
@@ -79,7 +110,7 @@ public class CameraActivity extends AppCompatActivity {
                 });
     }
 
-    private void setUpPineTreeModel() {
+    private void setUpPineTree2Model() {
         ModelRenderable.builder().setSource(this, R.raw.pinetree)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
@@ -104,72 +135,4 @@ public class CameraActivity extends AppCompatActivity {
         node.setRenderable(modelRenderable);
         node.select();
     }
-
-    /*View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return gestureDetector.onTouchEvent(event);
-
-        }
-    };
-
-    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onDown(MotionEvent event) {
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            return true;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2,
-                                float distanceX, float distanceY) {
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2,
-                               float velocityX, float velocityY) {
-            float middle = pineTreeButton.getX();
-            float left = elmTreeButton.getX();
-            float right = thirdButton.getX();
-
-            float distanceX = event2.getX() - event1.getX();
-            float distanceY = event2.getY() - event1.getY();
-            if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) >
-                    SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-
-                // change picture to
-                if (distanceX > 0) {
-                    // start left increment
-                    ObjectAnimator animX1 = ObjectAnimator.ofFloat(pineTreeButton, "x", left);
-                    ObjectAnimator animX2 = ObjectAnimator.ofFloat(elmTreeButton, "x", right);
-                    ObjectAnimator animX3 = ObjectAnimator.ofFloat(thirdButton, "x", middle);
-                    AnimatorSet animSetXY = new AnimatorSet();
-                    animSetXY.playTogether(animX1, animX2, animX3);
-                    animSetXY.start();
-                    //Toast.makeText(CameraActivity.this, "Right", Toast.LENGTH_SHORT).show();
-
-                }
-                else {  // the left
-                    // start right increment
-                    //Toast.makeText(CameraActivity.this, "Left", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            return true;
-        }
-    }*/
 }

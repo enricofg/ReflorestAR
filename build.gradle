@@ -90,4 +90,15 @@ sceneform.asset('sampledata/willow.obj',
 sceneform.asset('sampledata/pinus_sylvestris.obj',
         'default',
         'sampledata/pinus_sylvestris.sfa',
-        'src/main/res/raw/pinus_sylvestris')*/
+        'src/main/res/raw/pinus_sylvestris')
+
+sceneform.asset('sampledata/model.obj',
+        'default',
+        'sampledata/model.sfa',
+        'src/main/res/raw/pinuspinaster')*/
+
+
+sceneform.asset('sampledata/pinetree.obj',
+        'default',
+        'sampledata/pinetree.sfa',
+        'src/main/res/raw/pinetree')

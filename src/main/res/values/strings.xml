@@ -30,4 +30,6 @@
     <string name="create_account">Create account</string>
     <string name="create">Create</string>
     <string name="project_login_msg">To view projects, please login.</string>
+    <string name="pinus_pinaster">Pinus pinaster</string>
+    <string name="tree_2">Tree number2</string>
 </resources>
