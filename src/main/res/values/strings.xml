@@ -21,6 +21,7 @@
     <string name="min_height">Mininum height</string>
     <string name="max_height_abbr">Max. height</string>
     <string name="max_height">Maximum height</string>
+    <string name="tree_height">Trees height:</string>
     <string name="load_error">Tree image is downloading.</string>
     <string name="planted_trees">Planted trees</string>
     <string name="reforested_area">Reforested area</string>
