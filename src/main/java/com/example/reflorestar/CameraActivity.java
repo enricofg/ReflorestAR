@@ -18,10 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
@@ -33,7 +31,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.ArrayList;
 
-public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateListener {
+public class CameraActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
@@ -42,7 +40,6 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
     private Button closeButton, configButton, pinusPinasterButton, pineTree2Button;
 
     //tree variables
-    private AnchorNode currentAnchorNode, lastAnchorNode;
     private TextView tvDistance;
     private Anchor currentAnchor = null;
     private Anchor lastAnchor = null;
@@ -73,9 +70,7 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
         pinusPinasterButton = findViewById(R.id.buttonPinusPinaster);
         pineTree2Button = findViewById(R.id.buttonTree2);
 
-        //distance information and controls
-        tvDistance = findViewById(R.id.tvDistance);
-        tvDistance.setVisibility(View.INVISIBLE);
+        //distance control
         globalTreeHeight = 1.3f;
 
         //node list controls
@@ -160,33 +155,13 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
             AnchorNode anchorNode = new AnchorNode(anchor);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
 
-/*            if (lastAnchor == null) {
-                lastAnchor = anchor;
-                lastAnchorNode = anchorNode;
-            } else {
-                lastAnchor = currentAnchor;
-                lastAnchorNode = currentAnchorNode;
-            }*/
             currentAnchor = anchor;
-            //currentAnchorNode = anchorNode;
 
-            /*if (currentAnchorNode != null && lastAnchorNode != null && currentAnchorNode != lastAnchorNode) {
-                float dist = getDistanceBetweenVectorsInMeters(currentAnchor, lastAnchor);
-                if (dist < 0.8) {
-                    Toast.makeText(this, "Distance between trees is too small. Place tree at a farther distance.", Toast.LENGTH_LONG).show();
-                    currentAnchor = lastAnchor;
-                    currentAnchorNode = lastAnchorNode;
-                    return;
-                }
-                //addLineBetweenHits(currentAnchorNode, lastAnchorNode);
-            }*/
             if(!anchorList.isEmpty()){
                 for (AnchorNode a : anchorList) {
-                    float dist = getDistanceBetweenVectorsInMeters(currentAnchor, a.getAnchor());
+                    float dist = getDistanceBetweenAnchors(currentAnchor, a.getAnchor());
                     if (dist < 0.8) {
                         Toast.makeText(this, "Distance between trees is too small. Place tree at a farther distance.", Toast.LENGTH_LONG).show();
-/*                        currentAnchor = lastAnchor;
-                        currentAnchorNode = lastAnchorNode;*/
                         return;
                     }
                 }
@@ -196,8 +171,6 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
 
             createModel(anchorNode);
             anchorList.add(anchorNode);
-
-            //clearAnchor();
         });
     }
 
@@ -211,16 +184,8 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
 
         node.setParent(anchorNode);
         node.setRenderable(modelRenderable);
-
-        arFragment.getArSceneView().getScene().addOnUpdateListener(this);
         arFragment.getArSceneView().getScene().addChild(anchorNode);
-        node.select();
-
-        //remove node
-        /*node.setOnTapListener((HitTestResult hitTestResult, MotionEvent motionEvent) ->
-        {
-
-        });*/
+        //node.select();
         
         node.setOnTouchListener(new TouchTimer() {
             @Override
@@ -251,16 +216,7 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
         }
     }
 
-    @Override
-    public void onUpdate(FrameTime frameTime) {
-        //distance between nodes debug
-        /*if (currentAnchorNode != null && lastAnchorNode != null && currentAnchorNode != lastAnchorNode) {
-            tvDistance.setVisibility(View.VISIBLE);
-            tvDistance.setText("Distance between current node and last node: " + getDistanceBetweenVectorsInMeters(currentAnchor, lastAnchor) + " metres");
-        }*/
-    }
-
-    private float getDistanceBetweenVectorsInMeters(Anchor currentAnchor, Anchor comparingAnchor) {
+    private float getDistanceBetweenAnchors(Anchor currentAnchor, Anchor comparingAnchor) {
         Pose objectPose1 = currentAnchor.getPose();
         Pose objectPose2 = comparingAnchor.getPose();
 
@@ -308,19 +264,19 @@ public class CameraActivity extends AppCompatActivity implements Scene.OnUpdateL
     }
 
     public abstract class TouchTimer implements Node.OnTouchListener{
-        private long touchStart = 0l;
-        private long touchEnd = 0l;
+        private long startTimer = 0l;
+        private long endTimer = 0l;
 
         @Override
         public boolean onTouch(HitTestResult hitTestResult, MotionEvent motionEvent) {
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    this.touchStart = System.currentTimeMillis();
+                    this.startTimer = System.currentTimeMillis();
                     return true;
 
                 case MotionEvent.ACTION_UP:
-                    this.touchEnd = System.currentTimeMillis();
-                    long touchTime = this.touchEnd - this.touchStart;
+                    this.endTimer = System.currentTimeMillis();
+                    long touchTime = this.endTimer - this.startTimer;
                     onTouchEnded(touchTime, hitTestResult, motionEvent);
                     return true;
                     
