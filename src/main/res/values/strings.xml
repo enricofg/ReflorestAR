@@ -32,4 +32,11 @@
     <string name="project_login_msg">To view projects, please login.</string>
     <string name="pinus_pinaster">Pinus pinaster</string>
     <string name="tree_2">Tree number2</string>
+    <string name="searching_plane_message">Searching for surface</string>
+    <string name="waiting_for_tap_message">Tap on the surface to place a tree</string>
+    <string name="button_text_enable_depth">Enable</string>
+    <string name="button_text_disable_depth">Disable</string>
+    <string name="options_title_with_depth">Your device supports depth</string>
+    <string name="options_title_without_depth">Your device does not support depth</string>
+    <string name="depth_use_explanation">When Depth is enabled on supported devices, virtual objects adapt to the environment by blending in with the real world.</string>
 </resources>
