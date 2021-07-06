@@ -41,13 +41,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="@string/email"
+            android:text="@string/username"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/loginInputEmail"
+            android:id="@+id/loginInputUsername"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_marginTop="4dp"

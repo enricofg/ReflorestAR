@@ -1,7 +1,9 @@
 package com.example.reflorestar.ui.profile;
 
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,39 +14,78 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
-import com.example.reflorestar.ui.projects.ProjectsFragment;
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Set;
 
 public class AccountLoginFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
+    private TextInputLayout usernameInput, passwordInput;
+    private View root;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_account_login, container, false);
+        root = inflater.inflate(R.layout.fragment_account_login, container, false);
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        //DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
         fragmentContainer = root.findViewById(R.id.login_container);
 
         Button buttonLogin = root.findViewById(R.id.buttonLoginCredentials);
         Button backButton = root.findViewById(R.id.backButtonLogin);
 
-        buttonLogin.setOnClickListener(v -> {
-            accessProfile(fragmentContainer);
+        //login controls
+        usernameInput = root.findViewById(R.id.loginInputUsername);
+        passwordInput = root.findViewById(R.id.loginInputPassword);
+        Editable usernameText = usernameInput.getEditText().getText();
+        Editable passwordText = passwordInput.getEditText().getText();
 
+        buttonLogin.setOnClickListener(v -> {
+            //accessProfile(fragmentContainer);
+            if(!usernameText.toString().isEmpty() && !passwordText.toString().isEmpty()){
+                users.child(usernameText.toString()).addListenerForSingleValueEvent( //users.orderByChild("email").equalTo(emailText.toString().toLowerCase())
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    //user found
+                                    try {
+                                        User user = dataSnapshot.getValue(User.class);
+                                        String hashedPassword = new User().hashPassword(passwordText.toString());
+                                        if(hashedPassword.equals(user.getPassword())){
+                                            accessProfile(fragmentContainer, user);
+                                        }
+                                    } catch (NoSuchAlgorithmException e) {
+                                        e.printStackTrace();
+                                        //no such algorithm
+                                    }
+
+                                } else {
+                                    showMessage(getString(R.string.not_found), getString(R.string.not_found_warning));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                throw databaseError.toException();
+                            }
+                        });
+            } else{
+                showMessage(getString(R.string.empty_fields), getString(R.string.empty_fields_warning));
+            }
         });
 
         backButton.setOnClickListener(v -> {
@@ -56,13 +97,22 @@ public class AccountLoginFragment extends Fragment {
 
     private void returnToAccountHome(ConstraintLayout fragmentContainer) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.login_container, new AccountHomeFragment()).addToBackStack( "account_login" ).commit();
+        fm.beginTransaction().replace(R.id.login_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_login" ).commit();
         fragmentContainer.removeAllViews();
     }
 
-    private void accessProfile(ConstraintLayout fragmentContainer) {
+    private void accessProfile(ConstraintLayout fragmentContainer, User user) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.login_container, new ProfileFragment()).addToBackStack( "account_login" ).commit();
+        fm.beginTransaction().replace(R.id.login_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_login" ).commit();
         fragmentContainer.removeAllViews();
+    }
+
+    public void showMessage(String message, String warning) {
+        AlertDialog alertDialog = new AlertDialog.Builder(root.getContext()).create();
+        alertDialog.setTitle(warning);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
     }
 }

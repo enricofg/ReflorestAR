@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
@@ -129,7 +130,7 @@ public class AccountCreateFragment extends Fragment {
 
     private void returnToAccountHome(ConstraintLayout fragmentContainer) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.create_account_container, new AccountHomeFragment()).addToBackStack("create_account").commit();
+        fm.beginTransaction().replace(R.id.create_account_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("create_account").commit();
         fragmentContainer.removeAllViews();
     }
 

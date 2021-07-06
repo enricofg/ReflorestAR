@@ -38,6 +38,11 @@ public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
+    public User user;
+
+    public ProfileFragment(User user){
+        this.user = user;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -46,57 +51,17 @@ public class ProfileFragment extends Fragment {
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         fragmentContainer = root.findViewById(R.id.profile_container);
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference user = mDatabase.child("joanasanches");
-        FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
 
         TextView paramName = root.findViewById(R.id.txtName);
         TextView paramEmail = root.findViewById(R.id.txtEmail);
         ImageView paramUserImage = root.findViewById(R.id.imageUser);
         Button buttonLogout = root.findViewById(R.id.buttonLogout);
 
-        user.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.e("dataSnapshot", String.valueOf(dataSnapshot.getValue()));
-                        if (dataSnapshot.getValue() != null) {
-                            HashMap<String, Object> userProfile = (HashMap<String, Object>) dataSnapshot.getValue();
-                            Log.e("dataSnapshot", userProfile.toString());
-
-                            HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                            //firebase auth user data
-                            String name = userAuth.getDisplayName();
-                            String email = userAuth.getEmail();
-                            String photoUrl = userAuth.getPhotoUrl().toString();
-
-                            //paramName.setText(user.get("full_name").toString());
-                            //paramEmail.setText(user.get("email").toString());
-
-                            paramName.setText(name);
-                            paramEmail.setText(email);
-
-                            //Picasso.get().load(user.get("photo").toString()).error(R.drawable.ic_user).into(paramUserImage);
-                            Picasso.get().load(photoUrl).error(R.drawable.ic_user).into(paramUserImage);
-                        }
-                        //Log.e("user:", user.toString());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //handle databaseError
-                    }
-                });
+        paramName.setText(user.name);
+        paramEmail.setText(user.email);
 
         buttonLogout.setOnClickListener(v -> {
-            AuthUI.getInstance()
-                    .signOut(root.getContext())
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        public void onComplete(@NonNull Task<Void> task) {
-                            logout(fragmentContainer);
-                        }
-                    });
+            logout(fragmentContainer);
         });
 
         return root;
