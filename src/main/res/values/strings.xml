@@ -11,9 +11,11 @@
     <string name="status">Status</string>
     <string name="description">Description:</string>
     <string name="project_owner">Project owner:</string>
+    <string name="username">Username:</string>
     <string name="email">Email:</string>
     <string name="owner_email">Owner email:</string>
     <string name="password">Password:</string>
+    <string name="name">Name:</string>
     <string name="confirm_password">Confirm password:</string>
     <string name="min_dist_abbr">Min. distance</string>
     <string name="min_dist">Mininum distance</string>
@@ -40,4 +42,16 @@
     <string name="options_title_with_depth">Your device supports depth</string>
     <string name="options_title_without_depth">Your device does not support depth</string>
     <string name="depth_use_explanation">When Depth is enabled on supported devices, virtual objects adapt to the environment by blending in with the real world.</string>
+    <string name="min_distance_warning">Distance between trees is too small. Place tree at a farther distance.</string>
+    <string name="empty_fields">Please fill all the fields.</string>
+    <string name="empty_fields_warning">Fields are empty</string>
+    <string name="email_exists">An account with this email already exists.</string>
+    <string name="username_exists">An account with this username already exists.</string>
+    <string name="email_exists_warning">Email exists</string>
+    <string name="username_exists_warning">Username exists</string>
+    <string name="invalid_email">Email format is incorrect.</string>
+    <string name="password_error">The inserted passwords do not match.</string>
+    <string name="username_error">Username must be 6 characters long and can only include letters, numbers, ".", "_" and "-".</string>
+    <string name="user_created">User created successfully. You can now login with your credentials.</string>
+    <string name="success">Success</string>
 </resources>

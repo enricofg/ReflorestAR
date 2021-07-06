@@ -30,6 +30,7 @@ import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -40,11 +41,10 @@ public class CameraActivity extends AppCompatActivity {
     private Button closeButton, configButton, pinusPinasterButton, pineTree2Button;
 
     //tree variables
-    private TextView tvDistance;
     private Anchor currentAnchor = null;
-    private Anchor lastAnchor = null;
     private ArrayList<AnchorNode> anchorList;
     private float globalTreeHeight;
+    private static Random rand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +70,9 @@ public class CameraActivity extends AppCompatActivity {
         pinusPinasterButton = findViewById(R.id.buttonPinusPinaster);
         pineTree2Button = findViewById(R.id.buttonTree2);
 
-        //distance control
+        //tree controls
         globalTreeHeight = 1.3f;
+        rand = new Random();
 
         //node list controls
         anchorList = new ArrayList();
@@ -161,11 +162,10 @@ public class CameraActivity extends AppCompatActivity {
                 for (AnchorNode a : anchorList) {
                     float dist = getDistanceBetweenAnchors(currentAnchor, a.getAnchor());
                     if (dist < 0.8) {
-                        Toast.makeText(this, "Distance between trees is too small. Place tree at a farther distance.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.min_distance_warning), Toast.LENGTH_LONG).show();
                         return;
                     }
                 }
-
                 //addLineBetweenHits(currentAnchorNode, lastAnchorNode);
             }
 
@@ -179,8 +179,8 @@ public class CameraActivity extends AppCompatActivity {
         node.getTranslationController().setEnabled(false);
         node.getScaleController().setEnabled(false);
         node.setLocalScale(new Vector3(1.3f, globalTreeHeight, 1.3f));
-        //node.getRotationController().setEnabled(false);
-        //node.setLocalRotation(); //random Quaternion
+        node.getRotationController().setEnabled(false);
+        node.setLocalRotation(new Quaternion(0,rand.nextFloat(), 0, 1));
 
         node.setParent(anchorNode);
         node.setRenderable(modelRenderable);
