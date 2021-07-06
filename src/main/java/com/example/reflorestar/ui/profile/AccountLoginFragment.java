@@ -3,11 +3,11 @@ package com.example.reflorestar.ui.profile;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
+import com.example.reflorestar.classes.User;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,14 +27,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Set;
 
 public class AccountLoginFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
     private TextInputLayout usernameInput, passwordInput;
+    private TextView passwordWarning;
     private View root;
 
     @Override
@@ -52,6 +52,7 @@ public class AccountLoginFragment extends Fragment {
         passwordInput = root.findViewById(R.id.loginInputPassword);
         Editable usernameText = usernameInput.getEditText().getText();
         Editable passwordText = passwordInput.getEditText().getText();
+        passwordWarning = root.findViewById(R.id.passwordWarningLogin);
 
         buttonLogin.setOnClickListener(v -> {
             //accessProfile(fragmentContainer);
@@ -67,6 +68,8 @@ public class AccountLoginFragment extends Fragment {
                                         String hashedPassword = new User().hashPassword(passwordText.toString());
                                         if(hashedPassword.equals(user.getPassword())){
                                             accessProfile(fragmentContainer, user);
+                                        } else{
+                                            showInputWarning(passwordWarning, getString(R.string.incorrect_password));
                                         }
                                     } catch (NoSuchAlgorithmException e) {
                                         e.printStackTrace();
@@ -92,6 +95,11 @@ public class AccountLoginFragment extends Fragment {
             returnToAccountHome(fragmentContainer);
         });
 
+        passwordInput.setEndIconOnClickListener(view -> {
+            passwordText.clear();
+            passwordWarning.setVisibility(View.GONE);
+        });
+
         return root;
     }
 
@@ -114,5 +122,10 @@ public class AccountLoginFragment extends Fragment {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 (dialog, which) -> dialog.dismiss());
         alertDialog.show();
+    }
+
+    public void showInputWarning(TextView warning, String message) {
+        warning.setVisibility(View.VISIBLE);
+        warning.setText(message);
     }
 }

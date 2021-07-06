@@ -1,4 +1,4 @@
-package com.example.reflorestar.ui.profile;
+package com.example.reflorestar.classes;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
