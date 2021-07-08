@@ -1,8 +1,11 @@
 package com.example.reflorestar.ui.profile;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,14 +38,18 @@ public class AccountLoginFragment extends Fragment {
     private TextInputLayout usernameInput, passwordInput;
     private TextView passwordWarning;
     private View root;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_account_login, container, false);
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
         fragmentContainer = root.findViewById(R.id.login_container);
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
+
+        //shared preferences control
+        sharedPreferences = root.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
 
         Button buttonLogin = root.findViewById(R.id.buttonLoginCredentials);
         Button backButton = root.findViewById(R.id.backButtonLogin);
@@ -67,6 +74,8 @@ public class AccountLoginFragment extends Fragment {
                                         User user = dataSnapshot.getValue(User.class);
                                         String hashedPassword = new User().hashPassword(passwordText.toString());
                                         if(hashedPassword.equals(user.getPassword())){
+                                            sharedPreferences.edit().putString("username",user.username).apply();
+                                            Log.e("Logged user: ", sharedPreferences.getString("username", null));
                                             accessProfile(fragmentContainer, user);
                                         } else{
                                             showInputWarning(passwordWarning, getString(R.string.incorrect_password));

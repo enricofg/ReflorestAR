@@ -57,4 +57,7 @@
     <string name="not_found">No user with these credentials was found.</string>
     <string name="not_found_warning">User not found</string>
     <string name="incorrect_password">The password is incorrect.</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="upload_image">Upload profile image</string>
+    <string name="about">About</string>
 </resources>
