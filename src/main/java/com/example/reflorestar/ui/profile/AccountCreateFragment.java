@@ -36,7 +36,7 @@ public class AccountCreateFragment extends Fragment {
     private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
     private TextInputLayout emailInput, passwordInput, confirmPasswordInput, usernameInput, nameInput;
-    private TextView emailWarning, passwordWarning, usernameWarning;
+    private TextView emailWarning, passwordWarning, usernameWarning, nameWarning;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -63,15 +63,17 @@ public class AccountCreateFragment extends Fragment {
         emailWarning = root.findViewById(R.id.emailWarning);
         passwordWarning = root.findViewById(R.id.passwordWarning);
         usernameWarning = root.findViewById(R.id.usernameWarning);
+        nameWarning = root.findViewById(R.id.nameWarning);
 
         buttonConfirmAccount.setOnClickListener(v -> {
             //validations:
             if (!usernameText.toString().isEmpty() && !emailText.toString().isEmpty() && !nameText.toString().isEmpty() && !passwordText.toString().isEmpty() && !confirmText.toString().isEmpty()) {
                 validateUsername(usernameText);
+                validateName(nameText);
                 validateEmail(emailText);
                 validatePassword(passwordText, confirmText);
 
-                if (validateUsername(usernameText) && validateEmail(emailText) && validatePassword(passwordText, confirmText)) {
+                if (validateUsername(usernameText) && validateName(nameText) && validateEmail(emailText) && validatePassword(passwordText, confirmText)) {
                     users.orderByChild("username").equalTo(usernameText.toString()).addListenerForSingleValueEvent(
                             new ValueEventListener() {
                                 @Override
@@ -92,7 +94,7 @@ public class AccountCreateFragment extends Fragment {
                                                                 DatabaseReference newRef = users.child(usernameText.toString());
                                                                 newRef.setValue(newUser);
                                                                 showMessage(getString(R.string.user_created), getString(R.string.success));
-                                                                returnToAccountHome(fragmentContainer);
+                                                                accessProfile(fragmentContainer, newUser);
                                                             } catch (NoSuchAlgorithmException e) {
                                                                 e.printStackTrace();
                                                                 //no such algorithm
@@ -124,15 +126,25 @@ public class AccountCreateFragment extends Fragment {
             returnToAccountHome(fragmentContainer);
         });
 
-        setListeners(usernameText, emailText, passwordText, confirmText);
+        setListeners(usernameText, emailText, nameText, passwordText, confirmText);
 
         return root;
     }
 
     private void returnToAccountHome(ConstraintLayout fragmentContainer) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.create_account_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("create_account").commit();
-        fragmentContainer.removeAllViews();
+        if(getActivity()!=null){
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.create_account_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("create_account").commit();
+            fragmentContainer.removeAllViews();
+        }
+    }
+
+    private void accessProfile(ConstraintLayout fragmentContainer, User user) {
+        if(getActivity()!=null){
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.create_account_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("create_account").commit();
+            fragmentContainer.removeAllViews();
+        }
     }
 
     public void showMessage(String message, String warning) {
@@ -149,7 +161,24 @@ public class AccountCreateFragment extends Fragment {
         warning.setText(message);
     }
 
+    public boolean validateName(Editable usernameText) {
+        if(usernameText.length()>=50){
+            showInputWarning(nameWarning, getString(R.string.username_error2));
+            return false;
+        }
+        if (!usernameText.toString().matches("^[a-zA-Z-]{3,}$")) {
+            showInputWarning(nameWarning, getString(R.string.name_error));
+            return false;
+        }
+        nameWarning.setVisibility(View.GONE);
+        return true;
+    }
+
     public boolean validateUsername(Editable usernameText) {
+        if(usernameText.length()>=20){
+            showInputWarning(usernameWarning, getString(R.string.username_error2));
+            return false;
+        }
         if (!usernameText.toString().matches("^[a-zA-Z0-9._-]{6,}$")) {
             showInputWarning(usernameWarning, getString(R.string.username_error));
             return false;
@@ -180,7 +209,7 @@ public class AccountCreateFragment extends Fragment {
         return true;
     }
 
-    private void setListeners(Editable usernameText, Editable emailText, Editable passwordText, Editable confirmText) {
+    private void setListeners(Editable usernameText, Editable emailText, Editable nameText, Editable passwordText, Editable confirmText) {
         usernameInput.setEndIconOnClickListener(view -> {
             usernameText.clear();
             usernameWarning.setVisibility(View.GONE);
@@ -189,6 +218,11 @@ public class AccountCreateFragment extends Fragment {
         emailInput.setEndIconOnClickListener(view -> {
             emailText.clear();
             emailWarning.setVisibility(View.GONE);
+        });
+
+        nameInput.setEndIconOnClickListener(view -> {
+            nameText.clear();
+            nameWarning.setVisibility(View.GONE);
         });
 
         passwordInput.setEndIconOnClickListener(view -> {

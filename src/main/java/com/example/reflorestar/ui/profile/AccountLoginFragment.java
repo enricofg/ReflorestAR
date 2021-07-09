@@ -113,15 +113,19 @@ public class AccountLoginFragment extends Fragment {
     }
 
     private void returnToAccountHome(ConstraintLayout fragmentContainer) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.login_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_login" ).commit();
-        fragmentContainer.removeAllViews();
+        if(getActivity()!=null){
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.login_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_login").commit();
+            fragmentContainer.removeAllViews();
+        }
     }
 
     private void accessProfile(ConstraintLayout fragmentContainer, User user) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.login_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_login" ).commit();
-        fragmentContainer.removeAllViews();
+        if(getActivity()!=null){
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.login_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_login").commit();
+            fragmentContainer.removeAllViews();
+        }
     }
 
     public void showMessage(String message, String warning) {

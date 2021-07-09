@@ -27,7 +27,7 @@ public class User {
         this.name = name;
         this.password = hashPassword(password);
         this.blocked = false;
-        this.photo = "photo_url";
+        this.photo = "";
         this.type = "user";
     }
 

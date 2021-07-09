@@ -31,15 +31,15 @@ import java.security.NoSuchAlgorithmException;
 public class AccountHomeFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
-    private boolean authenticated = false;
     private ConstraintLayout fragmentContainer;
     private LinearLayout buttonsContainer;
     private SharedPreferences sharedPreferences;
+    private View root;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_account_home, container, false);
+        root = inflater.inflate(R.layout.fragment_account_home, container, false);
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         fragmentContainer = root.findViewById(R.id.account_home_container);
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
@@ -68,7 +68,7 @@ public class AccountHomeFragment extends Fragment {
                             throw databaseError.toException();
                         }
                     });
-        } else{
+        } else {
             buttonsContainer.setVisibility(View.VISIBLE);
         }
 
@@ -88,20 +88,26 @@ public class AccountHomeFragment extends Fragment {
     }
 
     private void accessProfile(ConstraintLayout fragmentContainer, User user) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.account_home_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_home" ).commit();
-        fragmentContainer.removeAllViews();
+        if (getActivity() != null) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.account_home_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_home").commit();
+            fragmentContainer.removeAllViews();
+        }
     }
 
     private void loginPage(ConstraintLayout fragmentContainer) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.account_home_container, new AccountLoginFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_home" ).commit();
-        fragmentContainer.removeAllViews();
+        if (getActivity() != null) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.account_home_container, new AccountLoginFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_home").commit();
+            fragmentContainer.removeAllViews();
+        }
     }
 
     private void createAccount(ConstraintLayout fragmentContainer) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.account_home_container, new AccountCreateFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack( "account_home" ).commit();
-        fragmentContainer.removeAllViews();
+        if (getActivity() != null) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.account_home_container, new AccountCreateFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_home").commit();
+            fragmentContainer.removeAllViews();
+        }
     }
 }

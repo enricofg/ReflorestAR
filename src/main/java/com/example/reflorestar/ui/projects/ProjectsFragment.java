@@ -71,7 +71,7 @@ public class ProjectsFragment extends Fragment {
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener((parent, view, position, id) -> {
-                String projectName = projectsResult.get(position).get("full_name").toString();
+                String projectName = projectsResult.get(position).get("name").toString();
                 String description = projectsResult.get(position).get("description").toString();
                 String availability = projectsResult.get(position).get("availability").toString();
                 String status = projectsResult.get(position).get("status").toString();
@@ -82,7 +82,7 @@ public class ProjectsFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
 
-                        String ownerName = user.get("full_name").toString();
+                        String ownerName = user.get("name").toString();
                         String email = user.get("email").toString();
                         String photo = user.get("photo").toString();
                         //Log.e("user:", user.toString());

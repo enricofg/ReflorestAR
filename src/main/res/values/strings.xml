@@ -51,13 +51,18 @@
     <string name="username_exists_warning">Username exists</string>
     <string name="invalid_email">Email format is incorrect.</string>
     <string name="password_error">The inserted passwords do not match.</string>
-    <string name="username_error">Username must be 6 characters long and can only include letters, numbers, ".", "_" and "-".</string>
-    <string name="user_created">User created successfully. You can now login with your credentials.</string>
+    <string name="username_error">Username must be at least 6 characters long and can only include letters, numbers, ".", "_" and "-".</string>
+    <string name="username_error2">Username must not be longer than 20 characters.</string>
+    <string name="name_error">Name must be at least 3 characters long and can only include letters and "-".</string>
+    <string name="name_error2">Name must not be longer than 50 characters.</string>
+    <string name="user_created">User created successfully. You will now be redirected to your profile page.</string>
     <string name="success">Success</string>
     <string name="not_found">No user with these credentials was found.</string>
     <string name="not_found_warning">User not found</string>
     <string name="incorrect_password">The password is incorrect.</string>
-    <string name="edit_profile">Edit profile</string>
+    <string name="edit_profile">Edit name</string>
     <string name="upload_image">Upload profile image</string>
+    <string name="remove_image">Remove profile image</string>
+    <string name="insert_name">Insert new name</string>
     <string name="about">About</string>
 </resources>
