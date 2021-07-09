@@ -1,6 +1,9 @@
 package com.example.reflorestar.ui.projects;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,25 +14,24 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.reflorestar.R;
-import com.squareup.picasso.Picasso;
 
 public class ProjectsItemFragment extends Fragment {
 
     private Button backButton;
-    private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerEmail, paramPhoto;
-    //private int paramProjectId;
+    private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerUsername, paramOwnerEmail, paramPhoto;
     private ConstraintLayout fragmentContainer;
     private View root;
 
-    public ProjectsItemFragment(String projectName, String description, String availability, String status, String ownerName, String ownerEmail, String photo) {
+    public ProjectsItemFragment(String projectName, String description, String availability, String status, String ownerName, String username, String ownerEmail, String photo) {
         paramProjectName = projectName;
         paramDescription = description;
         paramAvailability = availability;
         paramStatus = status;
-        //paramProjectId = Integer.parseInt(projectId);
         paramOwnerName = ownerName;
+        paramOwnerUsername = username;
         paramOwnerEmail = ownerEmail;
         paramPhoto = photo;
     }
@@ -51,6 +53,7 @@ public class ProjectsItemFragment extends Fragment {
         TextView availability = root.findViewById(R.id.paramAvailability);
         TextView status = root.findViewById(R.id.paramStatus);
         TextView ownerName = root.findViewById(R.id.paramProjectOwner);
+        TextView ownerUsername = root.findViewById(R.id.paramOwnerUsername);
         TextView ownerEmail = root.findViewById(R.id.paramOwnerEmail);
         ImageView ownerPhoto = root.findViewById(R.id.thumbnailPicture);
 
@@ -59,8 +62,12 @@ public class ProjectsItemFragment extends Fragment {
         availability.setText(this.paramAvailability);
         status.setText(this.paramStatus);
         ownerName.setText(this.paramOwnerName);
+        ownerUsername.setText(this.paramOwnerUsername);
         ownerEmail.setText(this.paramOwnerEmail);
-        Picasso.get().load(paramPhoto).error(R.drawable.ic_user).into(ownerPhoto);
+
+        if(!this.paramPhoto.isEmpty()){
+            ownerPhoto.setImageBitmap(getImageFromBase64EncodedString(this.paramPhoto));
+        }
 
         backButton = (Button) root.findViewById(R.id.backButtonProj);
         backButton.setOnClickListener(v -> {
@@ -70,11 +77,20 @@ public class ProjectsItemFragment extends Fragment {
         return root;
     }
 
+    public Bitmap getImageFromBase64EncodedString(String encodedBase64String) {
+        byte[] decodedString = Base64.decode(encodedBase64String, Base64.DEFAULT);
+        Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+        return decodedImg;
+    }
+
     private void returnToProjects(ConstraintLayout fragmentContainer) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.project_item_container, new ProjectsFragment()).addToBackStack( "project_item" ).commit();
-        //fragmentContainer.setVisibility(View.INVISIBLE);
-        fragmentContainer.removeAllViews();
+        if(getActivity()!=null){
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.project_item_container, new ProjectsFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("project_item").commit();
+            //fragmentContainer.setVisibility(View.INVISIBLE);
+            fragmentContainer.removeAllViews();
+        }
     }
 }
 

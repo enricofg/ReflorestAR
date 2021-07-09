@@ -1,6 +1,7 @@
 package com.example.reflorestar.ui.projects;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,83 +24,122 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProjectsFragment extends Fragment {
 
     private ProjectsViewModel projectsViewModel;
+    private View root;
     private ListView listView;
     private ListItemAdapter adapter;
-    DatabaseReference mDatabase, projectsDB, usersDB;
+    private DatabaseReference mDatabase, projectsDB, usersDB;
+    private SharedPreferences sharedPreferences;
+    private TextView emptyProjectsMessage, pageTitle;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         projectsViewModel =
                 new ViewModelProvider(this).get(ProjectsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_projects, container, false);
+        root = inflater.inflate(R.layout.fragment_projects, container, false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         projectsDB = mDatabase.child("projects");
         usersDB = mDatabase.child("users");
 
-        projectsDB.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of trees in datasnapshot
-                        getProjects(dataSnapshot, root);
-                    }
+        sharedPreferences = root.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        String authUser = sharedPreferences.getString("username", null);
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //handle databaseError
+        pageTitle = root.findViewById(R.id.projectsTitle);
+        emptyProjectsMessage = root.findViewById(R.id.emptyProjects);
+
+        if (authUser != null) {
+            usersDB.child(sharedPreferences.getString("username", "null")).child("projects").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                    HashMap<String, Object> userProjects = (HashMap<String, Object>) dataSnapshot.getValue();
+
+                    if (userProjects != null) {
+                        ArrayList<HashMap<String, Object>> projectsList = new ArrayList<>();
+
+                        userProjects.forEach((key, value) -> projectsDB.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                                HashMap<String, Object> project = (HashMap<String, Object>) dataSnapshot.getValue();
+                                if (project != null) {
+                                    projectsList.add(project);
+                                }
+                                getProjects(projectsList);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        }));
+                    } else{
+                        emptyProjectsMessage.setVisibility(View.VISIBLE);
+                        emptyProjectsMessage.setText(getString(R.string.empty_projects));
                     }
-                });
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            emptyProjectsMessage.setVisibility(View.VISIBLE);
+            emptyProjectsMessage.setText(getString(R.string.login_projects));
+        }
+
 
         return root;
     }
 
-    private void getProjects(DataSnapshot dataSnapshot, View root) {
+    private void getProjects(ArrayList<HashMap<String, Object>> projectsList) {
         listView = root.findViewById(R.id.resultList);
 
-        try {
-            ArrayList<HashMap<String, Object>> projectsResult = new ArrayList<>();
-            HashMap<String, Object> projects = (HashMap<String, Object>) dataSnapshot.getValue();
-            projects.forEach((key,value) -> projectsResult.add((HashMap<String, Object>) value));
+        if(!projectsList.isEmpty()){
+            pageTitle.setVisibility(View.VISIBLE);
+            emptyProjectsMessage.setVisibility(View.GONE);
 
-            adapter = new ListItemAdapter(root.getContext(), projectsResult);
-            listView.setAdapter(adapter);
+            try {
+                adapter = new ListItemAdapter(root.getContext(), projectsList);
+                listView.setAdapter(adapter);
 
-            listView.setOnItemClickListener((parent, view, position, id) -> {
-                String projectName = projectsResult.get(position).get("name").toString();
-                String description = projectsResult.get(position).get("description").toString();
-                String availability = projectsResult.get(position).get("availability").toString();
-                String status = projectsResult.get(position).get("status").toString();
+                listView.setOnItemClickListener((parent, view, position, id) -> {
+                    String projectName = projectsList.get(position).get("name").toString();
+                    String description = projectsList.get(position).get("description").toString();
+                    String availability = projectsList.get(position).get("availability").toString();
+                    String status = projectsList.get(position).get("status").toString();
 
-                DatabaseReference projectOwner = usersDB.child(projectsResult.get(position).get("username_owner").toString());
-                projectOwner.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
+                    DatabaseReference projectOwner = usersDB.child(projectsList.get(position).get("username_owner").toString());
+                    projectOwner.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap<String, Object> user = (HashMap<String, Object>) dataSnapshot.getValue();
 
-                        String ownerName = user.get("name").toString();
-                        String email = user.get("email").toString();
-                        String photo = user.get("photo").toString();
-                        //Log.e("user:", user.toString());
+                            String ownerName = user.get("name").toString();
+                            String username = user.get("username").toString();
+                            String email = user.get("email").toString();
+                            String photo = user.get("photo").toString();
 
-                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                        fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, availability, status, ownerName, email, photo)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
-                    }
+                            FragmentManager fm = getActivity().getSupportFragmentManager();
+                            fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, availability, status, ownerName, username, email, photo)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
+                        }
+                    });
                 });
-            });
-        } catch (Exception e) {
-            Log.e("Error:", e.getMessage());
-            return;
+            } catch (Exception e) {
+                Log.e("Error:", e.getMessage());
+                return;
+            }
         }
     }
 
@@ -142,12 +182,12 @@ public class ProjectsFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            try{
-                holder.txtFullName.setText(data.get(position).get("full_name").toString());
+            try {
+                holder.txtFullName.setText(data.get(position).get("name").toString());
                 holder.txtDescription.setText(data.get(position).get("description").toString());
                 holder.txtAvailability.setText(data.get(position).get("availability").toString());
                 holder.txtStatus.setText(data.get(position).get("status").toString());
-            } catch(Exception e){
+            } catch (Exception e) {
                 Log.e("Error:", e.getMessage());
             }
 

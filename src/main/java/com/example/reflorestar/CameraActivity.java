@@ -134,7 +134,7 @@ public class CameraActivity extends AppCompatActivity {
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(throwable -> {
-                    Toast.makeText(CameraActivity.this, "Model can't be loaded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CameraActivity.this, getString(R.string.model_error), Toast.LENGTH_SHORT).show();
                     return null;
                 });
     }
@@ -144,7 +144,7 @@ public class CameraActivity extends AppCompatActivity {
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(throwable -> {
-                    Toast.makeText(CameraActivity.this, "Model can't be loaded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CameraActivity.this, getString(R.string.model_error), Toast.LENGTH_SHORT).show();
                     return null;
                 });
     }

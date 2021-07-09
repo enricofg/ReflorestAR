@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
@@ -115,9 +116,9 @@ public class ProfileFragment extends Fragment {
                                     ArrayList<Object> projectTrees = (ArrayList<Object>) dataSnapshot.getValue();
                                     if (projectTrees != null) {
                                         treeCount += projectTrees.size();
-                                        for (Object projectTree : projectTrees) {
+                                        /*for (Object projectTree : projectTrees) {
                                             Log.e("Project Tree: ", projectTree.toString());
-                                        }
+                                        }*/
                                         paramTrees.setText(String.valueOf(treeCount));
                                     }
                                 }
@@ -160,7 +161,7 @@ public class ProfileFragment extends Fragment {
     private void logout(ConstraintLayout fragmentContainer) {
         if (getActivity() != null) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.profile_container, new AccountHomeFragment()).addToBackStack("profile_page").commit();
+            fm.beginTransaction().replace(R.id.profile_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("profile_page").commit();
             fragmentContainer.removeAllViews();
             sharedPreferences.edit().remove("username").apply();
             Log.e("Logged user: ", sharedPreferences.getString("username", "null"));

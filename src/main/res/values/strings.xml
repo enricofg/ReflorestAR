@@ -14,6 +14,7 @@
     <string name="username">Username:</string>
     <string name="email">Email:</string>
     <string name="owner_email">Owner email:</string>
+    <string name="owner_username">Owner username:</string>
     <string name="password">Password:</string>
     <string name="name">Name:</string>
     <string name="confirm_password">Confirm password:</string>
@@ -37,13 +38,14 @@
     <string name="tree_2">Tree number2</string>
     <string name="searching_plane_message">Searching for surface</string>
     <string name="waiting_for_tap_message">Tap on the surface to place a tree</string>
+    <string name="model_error">Model can\'t be loaded.</string>
     <string name="button_text_enable_depth">Enable</string>
     <string name="button_text_disable_depth">Disable</string>
     <string name="options_title_with_depth">Your device supports depth</string>
     <string name="options_title_without_depth">Your device does not support depth</string>
     <string name="depth_use_explanation">When Depth is enabled on supported devices, virtual objects adapt to the environment by blending in with the real world.</string>
     <string name="min_distance_warning">Distance between trees is too small. Place tree at a farther distance.</string>
-    <string name="empty_fields">Please fill all the fields.</string>
+    <string name="empty_fields">Fill all the fields to continue.</string>
     <string name="empty_fields_warning">Fields are empty</string>
     <string name="email_exists">An account with this email already exists.</string>
     <string name="username_exists">An account with this username already exists.</string>
@@ -64,5 +66,8 @@
     <string name="upload_image">Upload profile image</string>
     <string name="remove_image">Remove profile image</string>
     <string name="insert_name">Insert new name</string>
+    <string name="login_error">There was an error logging in. Please try again.</string>
     <string name="about">About</string>
+    <string name="empty_projects">It seems like you don\'t have any projects yet.</string>
+    <string name="login_projects">Log in to view your projects and projects shared with you.</string>
 </resources>

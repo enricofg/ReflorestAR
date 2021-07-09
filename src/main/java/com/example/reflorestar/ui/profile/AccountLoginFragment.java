@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,9 +63,8 @@ public class AccountLoginFragment extends Fragment {
         passwordWarning = root.findViewById(R.id.passwordWarningLogin);
 
         buttonLogin.setOnClickListener(v -> {
-            //accessProfile(fragmentContainer);
             if(!usernameText.toString().isEmpty() && !passwordText.toString().isEmpty()){
-                users.child(usernameText.toString()).addListenerForSingleValueEvent( //users.orderByChild("email").equalTo(emailText.toString().toLowerCase())
+                users.child(usernameText.toString()).addListenerForSingleValueEvent(
                         new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -83,6 +83,7 @@ public class AccountLoginFragment extends Fragment {
                                     } catch (NoSuchAlgorithmException e) {
                                         e.printStackTrace();
                                         //no such algorithm
+                                        Toast.makeText(root.getContext(), getString(R.string.login_error), Toast.LENGTH_LONG).show();
                                     }
 
                                 } else {
