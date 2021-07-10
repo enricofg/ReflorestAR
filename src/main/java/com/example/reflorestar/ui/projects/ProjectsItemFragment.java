@@ -1,10 +1,14 @@
 package com.example.reflorestar.ui.projects;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
@@ -13,8 +17,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -27,7 +33,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.reflorestar.R;
+import com.example.reflorestar.classes.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +52,7 @@ public class ProjectsItemFragment extends Fragment {
     private ListItemAdapter adapter;
     private Button backButton;
     private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerUsername, paramOwnerEmail, paramPhoto, authUser;
-    private TextView shareMessage;
+    private TextView shareMessage, usernameWarning;
     private LinearLayout containerShareInput;
     private ConstraintLayout fragmentContainer;
     private ListView userlist;
@@ -86,15 +94,48 @@ public class ProjectsItemFragment extends Fragment {
         projects = database.child("projects");
         users = database.child("users");
 
+        //share project controls
         shareMessage = root.findViewById(R.id.textViewShareMessage);
         containerShareInput = root.findViewById(R.id.containerShareInput);
+        TextInputLayout usernameInput = root.findViewById(R.id.insertUsername);
+        Editable usernameText = usernameInput.getEditText().getText();
+        usernameWarning = root.findViewById(R.id.usernameWarning2);
 
         authUser = sharedPreferences.getString("username", null);
-        if(authUser==null || !authUser.equals(paramOwnerUsername)){
+        if (authUser == null || !authUser.equals(paramOwnerUsername)) {
             shareMessage.setVisibility(View.GONE);
             containerShareInput.setVisibility(View.GONE);
+        } else {
+            Button shareButton = root.findViewById(R.id.buttonShare);
+            shareButton.setOnClickListener(v -> {
+                if (!usernameText.toString().isEmpty() && !usernameText.toString().equals(authUser)) {
+                    users.child(usernameText.toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                User user = dataSnapshot.getValue(User.class);
+                                ShareProjectDialog alert = new ShareProjectDialog();
+                                alert.showDialog(getActivity(), user.name, user.username, user.email, user.photo);
+
+                            } else {
+                                usernameWarning.setVisibility(View.VISIBLE);
+                                usernameWarning.setText(getString(R.string.not_found_username));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                        }
+                    });
+                } else{
+                    usernameWarning.setVisibility(View.VISIBLE);
+                    usernameWarning.setText(getString(R.string.share_error));
+                }
+            });
         }
 
+        //populate project info page
         TextView projectName = root.findViewById(R.id.projectName);
         TextView description = root.findViewById(R.id.projectDescription);
         TextView availability = root.findViewById(R.id.paramAvailability);
@@ -116,22 +157,48 @@ public class ProjectsItemFragment extends Fragment {
             ownerPhoto.setImageBitmap(getImageFromBase64EncodedString(this.paramPhoto));
         }
 
+        //shared user list
+        buildUserList();
+
+        //listeners
+        usernameInput.setEndIconOnClickListener(view -> {
+            usernameText.clear();
+            usernameWarning.setVisibility(View.GONE);
+        });
+
+        backButton = (Button) root.findViewById(R.id.backButtonProj);
+        backButton.setOnClickListener(v -> {
+            returnToProjects(fragmentContainer);
+        });
+
+        return root;
+    }
+
+    private void toggleNavBar() {
+        Transition transition = new Fade();
+        transition.setDuration(350);
+        transition.addTarget(navBar);
+        TransitionManager.beginDelayedTransition(container, transition);
+        navBar.setVisibility(navBar.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+    }
+
+    private void buildUserList() {
         projects.child(this.paramProjectName).child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
                 HashMap<String, Object> projectUsers = (HashMap<String, Object>) dataSnapshot.getValue();
-                if(projectUsers!=null) {
+                if (projectUsers != null) {
                     ArrayList<HashMap<String, Object>> projectUserList = new ArrayList<>();
                     projectUsers.forEach((key, value) ->
                             users.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
                                     HashMap<String, Object> projectUser = (HashMap<String, Object>) dataSnapshot.getValue();
-                                    if(projectUser!=null){
+                                    if (projectUser != null) {
                                         Log.e("User: ", projectUser.toString());
                                         projectUserList.add(projectUser);
                                     }
-                                    getProjectUserList(projectUserList);
+                                    getProjectUserListView(projectUserList);
                                 }
 
                                 @Override
@@ -148,25 +215,10 @@ public class ProjectsItemFragment extends Fragment {
 
             }
         });
-
-        backButton = (Button) root.findViewById(R.id.backButtonProj);
-        backButton.setOnClickListener(v -> {
-            returnToProjects(fragmentContainer);
-        });
-
-        return root;
     }
 
-    private void toggleNavBar() {
-        Transition transition = new Fade();
-        transition.setDuration(350);
-        transition.addTarget(navBar);
-        TransitionManager.beginDelayedTransition(container, transition);
-        navBar.setVisibility(navBar.getVisibility()==View.GONE ? View.VISIBLE : View.GONE);
-    }
-
-    private void getProjectUserList(ArrayList<HashMap<String, Object>> projectUserList) {
-        Log.e("Userlist: ", " length: "+projectUserList.size()+projectUserList.toString());
+    private void getProjectUserListView(ArrayList<HashMap<String, Object>> projectUserList) {
+        Log.e("Userlist: ", " length: " + projectUserList.size() + projectUserList.toString());
         adapter = new ProjectsItemFragment.ListItemAdapter(root.getContext(), projectUserList);
         userlist.setAdapter(adapter);
     }
@@ -229,15 +281,19 @@ public class ProjectsItemFragment extends Fragment {
             }
 
             try {
-                if(!data.get(position).get("photo").toString().isEmpty()){
+                if (!data.get(position).get("photo").toString().isEmpty()) {
                     holder.userPicture.setImageBitmap(getImageFromBase64EncodedString(data.get(position).get("photo").toString()));
                 }
                 holder.txtName.setText(data.get(position).get("name").toString());
                 holder.txtUsername.setText(data.get(position).get("username").toString());
                 holder.txtEmail.setText(data.get(position).get("email").toString());
-                if(authUser!=null && authUser.equals(paramOwnerUsername) && !authUser.equals(data.get(position).get("username").toString())){
+                if (authUser != null && authUser.equals(paramOwnerUsername) && !authUser.equals(data.get(position).get("username").toString())) {
                     holder.removeButton.setVisibility(View.VISIBLE);
-                    holder.removeButton.setOnClickListener(v -> {}); //TODO
+                    holder.removeButton.setOnClickListener(v -> {
+                        users.child(data.get(position).get("username").toString()).child("projects").child(paramProjectName).removeValue();
+                        projects.child(paramProjectName).child("users").child(data.get(position).get("username").toString()).removeValue();
+                        buildUserList();
+                    });
                 }
             } catch (Exception e) {
                 Log.e("Error:", e.getMessage());
@@ -252,6 +308,57 @@ public class ProjectsItemFragment extends Fragment {
             TextView txtUsername;
             TextView txtEmail;
             Button removeButton;
+        }
+    }
+
+    public class ShareProjectDialog {
+
+        public Button confirm, cancel;
+        public ImageView paramUserPicture;
+        public TextView paramUserName, paramUserUsername, paramUserEmail;
+        public CheckBox readonly;
+
+        public void showDialog(Activity activity, String name, String username, String email, String photo){
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.dialog_share_project);
+
+            readonly = dialog.findViewById(R.id.checkBoxReadOnly);
+            paramUserPicture = dialog.findViewById(R.id.thumbnailConfirmDialogPicture);
+            paramUserName = dialog.findViewById(R.id.paramConfirmDialogName);
+            paramUserUsername = dialog.findViewById(R.id.paramConfirmDialogUsername);
+            paramUserEmail = dialog.findViewById(R.id.paramConfirmDialogEmail);
+
+            if(!photo.isEmpty()){
+                paramUserPicture.setImageBitmap(getImageFromBase64EncodedString(photo));
+            }
+
+            paramUserName.setText(name);
+            paramUserUsername.setText(username);
+            paramUserEmail.setText(email);
+
+            confirm = (Button) dialog.findViewById(R.id.buttonConfirm);
+            cancel = (Button) dialog.findViewById(R.id.buttonCancel);
+
+            confirm.setOnClickListener(v -> {
+                if(!readonly.isChecked()){
+                    users.child(username).child("projects").child(paramProjectName).setValue("full");
+                } else{
+                    users.child(username).child("projects").child(paramProjectName).setValue("readonly");
+                }
+                projects.child(paramProjectName).child("users").child(username).setValue("true");
+                buildUserList();
+                dialog.dismiss();
+            });
+
+            cancel.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+
+            dialog.show();
+
         }
     }
 }

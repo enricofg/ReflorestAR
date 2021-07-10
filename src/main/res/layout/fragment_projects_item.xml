@@ -293,6 +293,9 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_marginBottom="4dp"
                         android:hint="@string/insert_username"
                         android:imeOptions="actionDone"
                         android:inputType="text"
@@ -311,6 +314,17 @@
                     android:background="@drawable/baseline_send_24" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/usernameWarning2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="28dp"
+                android:animateLayoutChanges="true"
+                android:textColor="@color/red"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textView14"
@@ -332,7 +346,8 @@
                 android:layout_marginStart="28dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="28dp"
-                android:nestedScrollingEnabled="true" />
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="none" />
 
         </LinearLayout>
     </ScrollView>

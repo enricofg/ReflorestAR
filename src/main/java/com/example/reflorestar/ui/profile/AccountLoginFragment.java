@@ -63,7 +63,7 @@ public class AccountLoginFragment extends Fragment {
         passwordWarning = root.findViewById(R.id.passwordWarningLogin);
 
         buttonLogin.setOnClickListener(v -> {
-            if(!usernameText.toString().isEmpty() && !passwordText.toString().isEmpty()){
+            if (!usernameText.toString().isEmpty() && !passwordText.toString().isEmpty()) {
                 users.child(usernameText.toString()).addListenerForSingleValueEvent(
                         new ValueEventListener() {
                             @Override
@@ -73,11 +73,13 @@ public class AccountLoginFragment extends Fragment {
                                     try {
                                         User user = dataSnapshot.getValue(User.class);
                                         String hashedPassword = new User().hashPassword(passwordText.toString());
-                                        if(hashedPassword.equals(user.getPassword())){
-                                            sharedPreferences.edit().putString("username",user.username).apply();
+                                        if (hashedPassword.equals(user.getPassword()) && user.blocked == false) {
+                                            sharedPreferences.edit().putString("username", user.username).apply();
                                             Log.e("Logged user: ", sharedPreferences.getString("username", null));
                                             accessProfile(fragmentContainer, user);
-                                        } else{
+                                        } else if (user.blocked == true) {
+                                            showMessage(getString(R.string.user_blocked), getString(R.string.user_blocked_warning));
+                                        } else {
                                             showInputWarning(passwordWarning, getString(R.string.incorrect_password));
                                         }
                                     } catch (NoSuchAlgorithmException e) {
@@ -96,7 +98,7 @@ public class AccountLoginFragment extends Fragment {
                                 throw databaseError.toException();
                             }
                         });
-            } else{
+            } else {
                 showMessage(getString(R.string.empty_fields), getString(R.string.empty_fields_warning));
             }
         });
@@ -114,7 +116,7 @@ public class AccountLoginFragment extends Fragment {
     }
 
     private void returnToAccountHome(ConstraintLayout fragmentContainer) {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.login_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_login").commit();
             fragmentContainer.removeAllViews();
@@ -122,7 +124,7 @@ public class AccountLoginFragment extends Fragment {
     }
 
     private void accessProfile(ConstraintLayout fragmentContainer, User user) {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.login_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("account_login").commit();
             fragmentContainer.removeAllViews();

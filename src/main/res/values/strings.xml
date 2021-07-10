@@ -61,6 +61,9 @@
     <string name="success">Success</string>
     <string name="not_found">No user with these credentials was found.</string>
     <string name="not_found_warning">User not found</string>
+    <string name="not_found_username">No user with this username was found</string>
+    <string name="user_blocked">This user is blocked.</string>
+    <string name="user_blocked_warning">Blocked</string>
     <string name="incorrect_password">The password is incorrect.</string>
     <string name="edit_profile">Edit name</string>
     <string name="upload_image">Upload profile image</string>
@@ -72,7 +75,12 @@
     <string name="login_projects">Log in to view your projects and projects shared with you.</string>
     <string name="share">Share</string>
     <string name="share_access">Share this project with another user:</string>
+    <string name="share_read_only">Share as read-only</string>
     <string name="insert_username">Insert a username</string>
     <string name="users_access">Users with access to this project:</string>
     <string name="remove">Remove</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm_user">Confirm this is the user you wish to share the project with:</string>
+    <string name="share_error">You cannot share a project with yourself.</string>
 </resources>
