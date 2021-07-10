@@ -20,6 +20,7 @@
         app:itemIconTint="@color/colorLight"
         app:itemTextColor="@color/colorLight"
         app:menu="@menu/bottom_nav_menu"
+        android:animateLayoutChanges="true"
         />
         <!--
             android:background="?android:attr/windowBackground"

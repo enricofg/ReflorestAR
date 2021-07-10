@@ -29,12 +29,6 @@
         android:label="@string/title_camera"
         tools:layout="@layout/fragment_camera" />
 
-<!--    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.reflorestar.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />-->
-
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.reflorestar.ui.profile.AccountHomeFragment"

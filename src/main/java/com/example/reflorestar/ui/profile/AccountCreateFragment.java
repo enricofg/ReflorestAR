@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
 import com.example.reflorestar.classes.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,10 +41,15 @@ public class AccountCreateFragment extends Fragment {
     private ConstraintLayout fragmentContainer;
     private TextInputLayout emailInput, passwordInput, confirmPasswordInput, usernameInput, nameInput;
     private TextView emailWarning, passwordWarning, usernameWarning, nameWarning;
+    private BottomNavigationView navBar;
+    private ViewGroup container;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        this.container = container;
+        navBar = getActivity().findViewById(R.id.nav_view);
+        toggleNavBar();
         root = inflater.inflate(R.layout.fragment_account_create, container, false);
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
@@ -131,11 +140,20 @@ public class AccountCreateFragment extends Fragment {
         return root;
     }
 
+    private void toggleNavBar() {
+        Transition transition = new Fade();
+        transition.setDuration(350);
+        transition.addTarget(navBar);
+        TransitionManager.beginDelayedTransition(container, transition);
+        navBar.setVisibility(navBar.getVisibility()==View.GONE ? View.VISIBLE : View.GONE);
+    }
+
     private void returnToAccountHome(ConstraintLayout fragmentContainer) {
         if(getActivity()!=null){
             FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.create_account_container, new AccountHomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("create_account").commit();
             fragmentContainer.removeAllViews();
+            toggleNavBar();
         }
     }
 
@@ -144,6 +162,7 @@ public class AccountCreateFragment extends Fragment {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.create_account_container, new ProfileFragment(user)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("create_account").commit();
             fragmentContainer.removeAllViews();
+            toggleNavBar();
         }
     }
 

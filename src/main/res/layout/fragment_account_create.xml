@@ -18,7 +18,6 @@
         android:drawableStart="@drawable/round_arrow_back_36"
         android:drawableTint="@color/colorPrimary"
         android:gravity="center"
-
         android:paddingStart="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,10 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="80dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginBottom="15dp"
         android:fadeScrollbars="false"
-        android:scrollbarDefaultDelayBeforeFade="2000"
-        android:scrollbarFadeDuration="500"
         android:scrollbarTrackVertical="@drawable/scrollbar_gradient"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +78,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:animateLayoutChanges="true"
-                android:textColor="#D0342C"
+                android:textColor="@color/red"
                 android:visibility="gone" />
 
             <TextView
@@ -120,7 +117,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:animateLayoutChanges="true"
-                android:textColor="#D0342C"
+                android:textColor="@color/red"
                 android:visibility="gone" />
 
             <TextView
@@ -158,7 +155,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:animateLayoutChanges="true"
-                android:textColor="#D0342C"
+                android:textColor="@color/red"
                 android:visibility="gone" />
 
             <TextView
@@ -226,7 +223,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:animateLayoutChanges="true"
-                android:textColor="#D0342C"
+                android:textColor="@color/red"
                 android:visibility="gone" />
 
             <LinearLayout
@@ -251,6 +248,7 @@
             </LinearLayout>
 
         </LinearLayout>
+        
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

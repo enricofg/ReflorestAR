@@ -70,4 +70,9 @@
     <string name="about">About</string>
     <string name="empty_projects">It seems like you don\'t have any projects yet.</string>
     <string name="login_projects">Log in to view your projects and projects shared with you.</string>
+    <string name="share">Share</string>
+    <string name="share_access">Share this project with another user:</string>
+    <string name="insert_username">Insert a username</string>
+    <string name="users_access">Users with access to this project:</string>
+    <string name="remove">Remove</string>
 </resources>
