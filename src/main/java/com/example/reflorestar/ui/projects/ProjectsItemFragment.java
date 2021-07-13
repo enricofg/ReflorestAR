@@ -15,6 +15,7 @@ import android.transition.TransitionManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -51,8 +52,10 @@ public class ProjectsItemFragment extends Fragment {
 
     private ListItemAdapter adapter;
     private Button backButton;
-    private String paramProjectName, paramDescription, paramAvailability, paramStatus, paramOwnerName, paramOwnerUsername, paramOwnerEmail, paramPhoto, authUser;
+    private String paramProjectName, paramDescription, paramSize, paramStatus, paramOwnerName, paramOwnerUsername, paramOwnerEmail, paramPhoto, authUser;
     private TextView shareMessage, usernameWarning;
+    private TextInputLayout usernameInput;
+    private Editable usernameText;
     private LinearLayout containerShareInput;
     private ConstraintLayout fragmentContainer;
     private ListView userlist;
@@ -61,11 +64,12 @@ public class ProjectsItemFragment extends Fragment {
     private View root;
     private BottomNavigationView navBar;
     private ViewGroup container;
+    private int treeCount = 0;
 
-    public ProjectsItemFragment(String projectName, String description, String availability, String status, String ownerName, String username, String ownerEmail, String photo) {
+    public ProjectsItemFragment(String projectName, String description, String size, String status, String ownerName, String username, String ownerEmail, String photo) {
         paramProjectName = projectName;
         paramDescription = description;
-        paramAvailability = availability;
+        paramSize = size;
         paramStatus = status;
         paramOwnerName = ownerName;
         paramOwnerUsername = username;
@@ -97,8 +101,8 @@ public class ProjectsItemFragment extends Fragment {
         //share project controls
         shareMessage = root.findViewById(R.id.textViewShareMessage);
         containerShareInput = root.findViewById(R.id.containerShareInput);
-        TextInputLayout usernameInput = root.findViewById(R.id.insertUsername);
-        Editable usernameText = usernameInput.getEditText().getText();
+        usernameInput = root.findViewById(R.id.insertUsername);
+        usernameText = usernameInput.getEditText().getText();
         usernameWarning = root.findViewById(R.id.usernameWarning2);
 
         authUser = sharedPreferences.getString("username", null);
@@ -109,7 +113,7 @@ public class ProjectsItemFragment extends Fragment {
             Button shareButton = root.findViewById(R.id.buttonShare);
             shareButton.setOnClickListener(v -> {
                 if (!usernameText.toString().isEmpty() && !usernameText.toString().equals(authUser)) {
-                    users.child(usernameText.toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    users.child(usernameText.toString().trim().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
@@ -128,7 +132,7 @@ public class ProjectsItemFragment extends Fragment {
 
                         }
                     });
-                } else{
+                } else {
                     usernameWarning.setVisibility(View.VISIBLE);
                     usernameWarning.setText(getString(R.string.share_error));
                 }
@@ -138,8 +142,9 @@ public class ProjectsItemFragment extends Fragment {
         //populate project info page
         TextView projectName = root.findViewById(R.id.projectName);
         TextView description = root.findViewById(R.id.projectDescription);
-        TextView availability = root.findViewById(R.id.paramAvailability);
-        TextView status = root.findViewById(R.id.paramStatus);
+        TextView trees = root.findViewById(R.id.paramProjectTrees);
+        TextView size = root.findViewById(R.id.paramProjectSize);
+        TextView status = root.findViewById(R.id.paramProjectStatus);
         TextView ownerName = root.findViewById(R.id.paramProjectOwner);
         TextView ownerUsername = root.findViewById(R.id.paramOwnerUsername);
         TextView ownerEmail = root.findViewById(R.id.paramOwnerEmail);
@@ -147,11 +152,32 @@ public class ProjectsItemFragment extends Fragment {
 
         projectName.setText(this.paramProjectName);
         description.setText(this.paramDescription);
-        availability.setText(this.paramAvailability);
+        size.setText(this.paramSize);
         status.setText(this.paramStatus);
         ownerName.setText(this.paramOwnerName);
         ownerUsername.setText(this.paramOwnerUsername);
         ownerEmail.setText(this.paramOwnerEmail);
+
+        projects.child(this.paramProjectName).child("trees").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                ArrayList<Object> projectTrees = (ArrayList<Object>) dataSnapshot.getValue();
+                if (projectTrees != null) {
+                    treeCount += projectTrees.size();
+                    /*  tree detail for each tree:
+                        for (Object projectTree : projectTrees) {
+                        Log.e("Project Tree: ", projectTree.toString());
+                    }*/
+                    trees.setText(String.valueOf(treeCount));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
 
         if (!this.paramPhoto.isEmpty()) {
             ownerPhoto.setImageBitmap(getImageFromBase64EncodedString(this.paramPhoto));
@@ -221,6 +247,7 @@ public class ProjectsItemFragment extends Fragment {
         Log.e("Userlist: ", " length: " + projectUserList.size() + projectUserList.toString());
         adapter = new ProjectsItemFragment.ListItemAdapter(root.getContext(), projectUserList);
         userlist.setAdapter(adapter);
+        //userlist.setOnTouchListener((v, event) -> (event.getAction() == MotionEvent.ACTION_MOVE));
     }
 
     public Bitmap getImageFromBase64EncodedString(String encodedBase64String) {
@@ -274,6 +301,7 @@ public class ProjectsItemFragment extends Fragment {
                 holder.txtName = convertView.findViewById(R.id.paramUserListName);
                 holder.txtUsername = convertView.findViewById(R.id.paramUserListUsername);
                 holder.txtEmail = convertView.findViewById(R.id.paramUserListEmail);
+                holder.txtAccessType = convertView.findViewById(R.id.paramUserListAccessType);
                 holder.removeButton = convertView.findViewById(R.id.buttonRemove);
                 convertView.setTag(holder);
             } else {
@@ -287,7 +315,30 @@ public class ProjectsItemFragment extends Fragment {
                 holder.txtName.setText(data.get(position).get("name").toString());
                 holder.txtUsername.setText(data.get(position).get("username").toString());
                 holder.txtEmail.setText(data.get(position).get("email").toString());
-                if (authUser != null && authUser.equals(paramOwnerUsername) && !authUser.equals(data.get(position).get("username").toString())) {
+
+                users.child(data.get(position).get("username").toString()).child("projects").child(paramProjectName).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String projectAccess = (String) dataSnapshot.getValue();
+                            if (paramOwnerUsername.equals(data.get(position).get("username").toString())){
+                                holder.txtAccessType.setText("Owner");
+                            } else if (projectAccess.equals("full")) {
+                                holder.txtAccessType.setText("Full");
+                            } else if (projectAccess.equals("readonly")) {
+                                holder.txtAccessType.setText("Read-only");
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                    }
+                });
+
+                if (authUser != null && authUser.equals(paramOwnerUsername) && !paramOwnerUsername.equals(data.get(position).get("username").toString())) {
                     holder.removeButton.setVisibility(View.VISIBLE);
                     holder.removeButton.setOnClickListener(v -> {
                         users.child(data.get(position).get("username").toString()).child("projects").child(paramProjectName).removeValue();
@@ -295,6 +346,7 @@ public class ProjectsItemFragment extends Fragment {
                         buildUserList();
                     });
                 }
+
             } catch (Exception e) {
                 Log.e("Error:", e.getMessage());
             }
@@ -307,6 +359,7 @@ public class ProjectsItemFragment extends Fragment {
             TextView txtName;
             TextView txtUsername;
             TextView txtEmail;
+            TextView txtAccessType;
             Button removeButton;
         }
     }
@@ -318,7 +371,7 @@ public class ProjectsItemFragment extends Fragment {
         public TextView paramUserName, paramUserUsername, paramUserEmail;
         public CheckBox readonly;
 
-        public void showDialog(Activity activity, String name, String username, String email, String photo){
+        public void showDialog(Activity activity, String name, String username, String email, String photo) {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -331,7 +384,7 @@ public class ProjectsItemFragment extends Fragment {
             paramUserUsername = dialog.findViewById(R.id.paramConfirmDialogUsername);
             paramUserEmail = dialog.findViewById(R.id.paramConfirmDialogEmail);
 
-            if(!photo.isEmpty()){
+            if (!photo.isEmpty()) {
                 paramUserPicture.setImageBitmap(getImageFromBase64EncodedString(photo));
             }
 
@@ -343,13 +396,15 @@ public class ProjectsItemFragment extends Fragment {
             cancel = (Button) dialog.findViewById(R.id.buttonCancel);
 
             confirm.setOnClickListener(v -> {
-                if(!readonly.isChecked()){
+                if (!readonly.isChecked()) {
                     users.child(username).child("projects").child(paramProjectName).setValue("full");
-                } else{
+                } else {
                     users.child(username).child("projects").child(paramProjectName).setValue("readonly");
                 }
-                projects.child(paramProjectName).child("users").child(username).setValue("true");
+                projects.child(paramProjectName).child("users").child(username).setValue(true);
                 buildUserList();
+                usernameText.clear();
+                usernameWarning.setVisibility(View.GONE);
                 dialog.dismiss();
             });
 

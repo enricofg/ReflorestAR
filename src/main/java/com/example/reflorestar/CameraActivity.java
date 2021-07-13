@@ -1,5 +1,6 @@
 package com.example.reflorestar;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Transition;
@@ -7,6 +8,7 @@ import android.transition.TransitionManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -289,5 +291,10 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         protected abstract void onTouchEnded(long touchTimeInMillis, HitTestResult hitTestResult, MotionEvent motionEvent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

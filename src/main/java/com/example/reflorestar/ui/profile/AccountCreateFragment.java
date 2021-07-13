@@ -1,6 +1,8 @@
 package com.example.reflorestar.ui.profile;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -43,6 +45,7 @@ public class AccountCreateFragment extends Fragment {
     private TextView emailWarning, passwordWarning, usernameWarning, nameWarning;
     private BottomNavigationView navBar;
     private ViewGroup container;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -54,6 +57,9 @@ public class AccountCreateFragment extends Fragment {
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
         fragmentContainer = root.findViewById(R.id.create_account_container);
+
+        //shared preferences control
+        sharedPreferences = root.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
 
         Button buttonConfirmAccount = root.findViewById(R.id.buttonConfirmAccount);
         Button backButton = root.findViewById(R.id.backButtonCreateAcc);
@@ -104,6 +110,7 @@ public class AccountCreateFragment extends Fragment {
                                                                 newRef.setValue(newUser);
                                                                 showMessage(getString(R.string.user_created), getString(R.string.success));
                                                                 accessProfile(fragmentContainer, newUser);
+                                                                sharedPreferences.edit().putString("username", newUser.username).apply();
                                                             } catch (NoSuchAlgorithmException e) {
                                                                 e.printStackTrace();
                                                                 //no such algorithm

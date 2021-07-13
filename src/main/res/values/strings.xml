@@ -17,6 +17,8 @@
     <string name="owner_username">Owner username:</string>
     <string name="password">Password:</string>
     <string name="name">Name:</string>
+    <string name="access_type">Access type:</string>
+    <string name="size">Size</string>
     <string name="confirm_password">Confirm password:</string>
     <string name="min_dist_abbr">Min. distance</string>
     <string name="min_dist">Mininum distance</string>

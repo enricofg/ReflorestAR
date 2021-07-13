@@ -78,7 +78,7 @@ public class ProjectsFragment extends Fragment {
 
                             }
                         }));
-                    } else{
+                    } else {
                         emptyProjectsMessage.setVisibility(View.VISIBLE);
                         emptyProjectsMessage.setText(getString(R.string.empty_projects));
                     }
@@ -101,7 +101,7 @@ public class ProjectsFragment extends Fragment {
     private void getProjects(ArrayList<HashMap<String, Object>> projectsList) {
         listView = root.findViewById(R.id.resultList);
 
-        if(!projectsList.isEmpty()){
+        if (!projectsList.isEmpty()) {
             pageTitle.setVisibility(View.VISIBLE);
             emptyProjectsMessage.setVisibility(View.GONE);
 
@@ -112,8 +112,8 @@ public class ProjectsFragment extends Fragment {
                 listView.setOnItemClickListener((parent, view, position, id) -> {
                     String projectName = projectsList.get(position).get("name").toString();
                     String description = projectsList.get(position).get("description").toString();
-                    String availability = projectsList.get(position).get("availability").toString();
                     String status = projectsList.get(position).get("status").toString();
+                    String size = projectsList.get(position).get("size").toString();
 
                     DatabaseReference projectOwner = usersDB.child(projectsList.get(position).get("username_owner").toString());
                     projectOwner.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -127,7 +127,7 @@ public class ProjectsFragment extends Fragment {
                             String photo = user.get("photo").toString();
 
                             FragmentManager fm = getActivity().getSupportFragmentManager();
-                            fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, availability, status, ownerName, username, email, photo)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+                            fm.beginTransaction().replace(R.id.projects_container, new ProjectsItemFragment(projectName, description, size, status, ownerName, username, email, photo)).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
                         }
 
                         @Override

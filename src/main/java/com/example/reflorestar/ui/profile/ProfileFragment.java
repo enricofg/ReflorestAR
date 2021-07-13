@@ -116,9 +116,6 @@ public class ProfileFragment extends Fragment {
                                     ArrayList<Object> projectTrees = (ArrayList<Object>) dataSnapshot.getValue();
                                     if (projectTrees != null) {
                                         treeCount += projectTrees.size();
-                                        /*for (Object projectTree : projectTrees) {
-                                            Log.e("Project Tree: ", projectTree.toString());
-                                        }*/
                                         paramTrees.setText(String.valueOf(treeCount));
                                     }
                                 }
