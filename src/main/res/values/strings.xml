@@ -85,4 +85,5 @@
     <string name="cancel">Cancel</string>
     <string name="confirm_user">Confirm this is the user you wish to share the project with:</string>
     <string name="share_error">You cannot share a project with yourself.</string>
+    <string name="save">Save project</string>
 </resources>

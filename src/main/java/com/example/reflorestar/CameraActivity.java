@@ -1,22 +1,27 @@
 package com.example.reflorestar;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import com.example.reflorestar.classes.Tree;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
@@ -30,23 +35,38 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Random;
 
+import uk.co.appoly.arcorelocation.LocationMarker;
+import uk.co.appoly.arcorelocation.LocationScene;
+
 public class CameraActivity extends AppCompatActivity {
 
+    private static final float R_EARTH = 6378;
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
     private LinearLayout containerOptions;
     private SeekBar sliderQuant;
-    private Button closeButton, configButton, pinusPinasterButton, pineTree2Button;
+    private Button closeButton, saveButton, configButton, pinusPinasterButton, pineTree2Button;
+    private SharedPreferences sharedPreferences;
+    private DatabaseReference users, project;
 
     //tree variables
     private Anchor currentAnchor = null;
     private ArrayList<AnchorNode> anchorList;
     private float globalTreeHeight;
     private static Random rand;
+    private String treeType;
+    private ArrayList<Tree> trees = new ArrayList<>();
+
+    //ARCore-Location scene
+    private LocationScene locationScene;
+    private Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +78,14 @@ public class CameraActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        //location services
+        checkLocationStatus();
+
+        //DB and user prep
+        sharedPreferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        users = FirebaseDatabase.getInstance().getReference("users");
+        project = FirebaseDatabase.getInstance().getReference("projects").child("P2").child("trees");
+
         //camera view containers
         View cameraContainer = findViewById(R.id.layoutCamera);
         containerOptions = findViewById(R.id.containerCamOptions);
@@ -68,6 +96,7 @@ public class CameraActivity extends AppCompatActivity {
 
         //buttons
         closeButton = findViewById(R.id.closeButton);
+        saveButton = findViewById(R.id.buttonSaveProject);
         configButton = findViewById(R.id.configButtonCam);
         pinusPinasterButton = findViewById(R.id.buttonPinusPinaster);
         pineTree2Button = findViewById(R.id.buttonTree2);
@@ -80,8 +109,17 @@ public class CameraActivity extends AppCompatActivity {
         anchorList = new ArrayList();
 
         //close camera
-        closeButton.setOnClickListener(view -> {
-            finish();
+        closeButton.setOnClickListener(view -> finish());
+
+        //save project
+        saveButton.setOnClickListener(view -> {
+            int c = 0;
+            for (Tree tree:trees
+                 ) {
+                project.child(String.valueOf(c)).setValue(tree);
+                c++;
+            }
+            Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
         });
 
         //open config menu
@@ -98,10 +136,10 @@ public class CameraActivity extends AppCompatActivity {
         sliderQuant.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                globalTreeHeight = 1.3f + progress*0.01f;
+                globalTreeHeight = 1.3f + progress * 0.01f;
                 //Log.e("Progress Value:", String.valueOf(globalTreeHeight));
 
-                for(AnchorNode a : anchorList){
+                for (AnchorNode a : anchorList) {
                     Vector3 newScale = new Vector3(a.getLocalScale().x, globalTreeHeight, a.getLocalScale().z);
                     a.setLocalScale(newScale);
                 }
@@ -118,12 +156,11 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
-
         pinusPinasterButton.setOnClickListener(view -> {
             setUpPinusPinasterModel();
         });
         pineTree2Button.setOnClickListener(view -> {
-            setUpPineTree2Model();
+            setUpPineTreeModel();
         });
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
@@ -132,6 +169,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void setUpPinusPinasterModel() {
+        treeType="pinusPinaster";
         ModelRenderable.builder().setSource(this, R.raw.pinuspinaster)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
@@ -141,7 +179,8 @@ public class CameraActivity extends AppCompatActivity {
                 });
     }
 
-    private void setUpPineTree2Model() {
+    private void setUpPineTreeModel() {
+        treeType="pineTree";
         ModelRenderable.builder().setSource(this, R.raw.pinetree)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
@@ -153,6 +192,10 @@ public class CameraActivity extends AppCompatActivity {
 
     private void setUpPlane() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+            if (locationScene == null) {
+                locationScene = new LocationScene(this, this, arFragment.getArSceneView());
+            }
+
             // Creating Anchor
             Anchor anchor = hitResult.createAnchor();
             AnchorNode anchorNode = new AnchorNode(anchor);
@@ -160,7 +203,7 @@ public class CameraActivity extends AppCompatActivity {
 
             currentAnchor = anchor;
 
-            if(!anchorList.isEmpty()){
+            if (!anchorList.isEmpty()) {
                 for (AnchorNode a : anchorList) {
                     float dist = getDistanceBetweenAnchors(currentAnchor, a.getAnchor());
                     if (dist < 0.8) {
@@ -173,6 +216,27 @@ public class CameraActivity extends AppCompatActivity {
 
             createModel(anchorNode);
             anchorList.add(anchorNode);
+
+            if (location != null) {
+                LocationMarker layoutLocationMarker = new LocationMarker(
+                        calculateLocation(anchor, anchorNode).get(0),
+                        calculateLocation(anchor, anchorNode).get(1),
+                        anchorNode
+                );
+
+                Tree tree = new Tree(
+                        calculateLocation(anchor, anchorNode).get(0),
+                        calculateLocation(anchor, anchorNode).get(1),
+                        globalTreeHeight,
+                        treeType
+                );
+
+                trees.add(tree);
+
+                Log.e("Object world position: ", "Location -> longitude: "+layoutLocationMarker.longitude+" \n->latitude: "+layoutLocationMarker.latitude);
+            } else{
+                checkLocationStatus();
+            }
         });
     }
 
@@ -182,17 +246,17 @@ public class CameraActivity extends AppCompatActivity {
         node.getScaleController().setEnabled(false);
         node.setLocalScale(new Vector3(1.3f, globalTreeHeight, 1.3f));
         node.getRotationController().setEnabled(false);
-        node.setLocalRotation(new Quaternion(0,rand.nextFloat(), 0, 1));
+        node.setLocalRotation(new Quaternion(0, rand.nextFloat(), 0, 1));
 
         node.setParent(anchorNode);
         node.setRenderable(modelRenderable);
         arFragment.getArSceneView().getScene().addChild(anchorNode);
         //node.select();
-        
+
         node.setOnTouchListener(new TouchTimer() {
             @Override
             protected void onTouchEnded(long tapTimeInMillis, HitTestResult hitTestResult, MotionEvent motionEvent) {
-                if(tapTimeInMillis >= 1500){
+                if (tapTimeInMillis >= 1500) {
                     removeNode(hitTestResult, motionEvent);
                 }
             }
@@ -215,7 +279,26 @@ public class CameraActivity extends AppCompatActivity {
                 ((AnchorNode) hitNode.getParent()).getAnchor().detach();
             }
             hitNode.setParent(null);
+            trees.remove(trees.size()-1);
         }
+    }
+
+    private ArrayList<Float> calculateLocation(Anchor anchor, AnchorNode anchorNode){
+        Pose objectPose = anchor.getPose();
+        Pose cameraPose = arFragment.getArSceneView().getArFrame().getCamera().getPose();
+
+        float distanceX = objectPose.tx() - cameraPose.tx();
+        float distanceY = objectPose.ty() - cameraPose.ty();
+
+
+        float newLatitude  = (float) (location.getLatitude()  + (distanceY / R_EARTH) * (180 / Math.PI));
+        float newLongitude  = (float) (location.getLongitude() + (distanceX / R_EARTH) * (180 / Math.PI) / Math.cos(location.getLatitude() * Math.PI/180));
+
+        ArrayList<Float> objectLocation = new ArrayList<>();
+        objectLocation.add(newLatitude);
+        objectLocation.add(newLongitude);
+
+        return objectLocation;
     }
 
     private float getDistanceBetweenAnchors(Anchor currentAnchor, Anchor comparingAnchor) {
@@ -265,7 +348,7 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    public abstract class TouchTimer implements Node.OnTouchListener{
+    public abstract class TouchTimer implements Node.OnTouchListener {
         private long startTimer = 0l;
         private long endTimer = 0l;
 
@@ -281,7 +364,7 @@ public class CameraActivity extends AppCompatActivity {
                     long touchTime = this.endTimer - this.startTimer;
                     onTouchEnded(touchTime, hitTestResult, motionEvent);
                     return true;
-                    
+
                 case MotionEvent.ACTION_MOVE:
                     return true;
 
@@ -291,6 +374,23 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         protected abstract void onTouchEnded(long touchTimeInMillis, HitTestResult hitTestResult, MotionEvent motionEvent);
+    }
+
+    //Get location
+    public void checkLocationStatus() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    100);
+            return;
+        }
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location == null) {
+            location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        }
     }
 
     @Override

@@ -328,7 +328,6 @@ public class ProjectsItemFragment extends Fragment {
                             } else if (projectAccess.equals("readonly")) {
                                 holder.txtAccessType.setText("Read-only");
                             }
-
                         }
                     }
 
@@ -403,6 +402,7 @@ public class ProjectsItemFragment extends Fragment {
                 }
                 projects.child(paramProjectName).child("users").child(username).setValue(true);
                 buildUserList();
+                usernameInput.clearFocus();
                 usernameText.clear();
                 usernameWarning.setVisibility(View.GONE);
                 dialog.dismiss();

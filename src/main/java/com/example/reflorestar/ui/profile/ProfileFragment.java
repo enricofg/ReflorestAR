@@ -113,10 +113,12 @@ public class ProfileFragment extends Fragment {
                             projects.child(key).child("trees").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
-                                    ArrayList<Object> projectTrees = (ArrayList<Object>) dataSnapshot.getValue();
-                                    if (projectTrees != null) {
-                                        treeCount += projectTrees.size();
-                                        paramTrees.setText(String.valueOf(treeCount));
+                                    if(dataSnapshot.exists()){
+                                        ArrayList<Object> projectTrees = (ArrayList<Object>) dataSnapshot.getValue();
+                                        if (projectTrees != null) {
+                                            treeCount += projectTrees.size();
+                                            paramTrees.setText(String.valueOf(treeCount));
+                                        }
                                     }
                                 }
 

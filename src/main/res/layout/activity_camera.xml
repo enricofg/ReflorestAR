@@ -44,11 +44,17 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/buttonSaveProject"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttonstyle"
+                android:text="@string/save"
+                android:textColor="@color/white" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
