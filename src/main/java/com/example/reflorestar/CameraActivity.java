@@ -1,26 +1,30 @@
 package com.example.reflorestar;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.reflorestar.classes.Project;
 import com.example.reflorestar.classes.Tree;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Pose;
@@ -35,14 +39,17 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.math.BigDecimal;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-import uk.co.appoly.arcorelocation.LocationMarker;
 import uk.co.appoly.arcorelocation.LocationScene;
 
 public class CameraActivity extends AppCompatActivity {
@@ -54,12 +61,13 @@ public class CameraActivity extends AppCompatActivity {
     private SeekBar sliderQuant;
     private Button closeButton, saveButton, configButton, pinusPinasterButton, pineTree2Button;
     private SharedPreferences sharedPreferences;
-    private DatabaseReference users, project;
+    private DatabaseReference users, projects;
+    private String projectName = "";
+    private String projectDescription = "";
 
     //tree variables
-    private Anchor currentAnchor = null;
     private ArrayList<AnchorNode> anchorList;
-    private float globalTreeHeight;
+    private float nextTreeHeight;
     private static Random rand;
     private String treeType;
     private ArrayList<Tree> trees = new ArrayList<>();
@@ -78,13 +86,11 @@ public class CameraActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        //location services
-        checkLocationStatus();
-
         //DB and user prep
-        sharedPreferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        sharedPreferences = CameraActivity.this.getSharedPreferences("user", Context.MODE_PRIVATE);
+        String authUser = sharedPreferences.getString("username", null);
         users = FirebaseDatabase.getInstance().getReference("users");
-        project = FirebaseDatabase.getInstance().getReference("projects").child("P2").child("trees");
+        projects = FirebaseDatabase.getInstance().getReference("projects");
 
         //camera view containers
         View cameraContainer = findViewById(R.id.layoutCamera);
@@ -102,7 +108,7 @@ public class CameraActivity extends AppCompatActivity {
         pineTree2Button = findViewById(R.id.buttonTree2);
 
         //tree controls
-        globalTreeHeight = 1.3f;
+        nextTreeHeight = 1.3f;
         rand = new Random();
 
         //node list controls
@@ -113,13 +119,7 @@ public class CameraActivity extends AppCompatActivity {
 
         //save project
         saveButton.setOnClickListener(view -> {
-            int c = 0;
-            for (Tree tree:trees
-                 ) {
-                project.child(String.valueOf(c)).setValue(tree);
-                c++;
-            }
-            Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+            saveProjectDialog();
         });
 
         //open config menu
@@ -136,13 +136,13 @@ public class CameraActivity extends AppCompatActivity {
         sliderQuant.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                globalTreeHeight = 1.3f + progress * 0.01f;
+                nextTreeHeight = 1.3f + progress * 0.01f;
                 //Log.e("Progress Value:", String.valueOf(globalTreeHeight));
 
-                for (AnchorNode a : anchorList) {
-                    Vector3 newScale = new Vector3(a.getLocalScale().x, globalTreeHeight, a.getLocalScale().z);
+                /*for (AnchorNode a : anchorList) {
+                    Vector3 newScale = new Vector3(a.getLocalScale().x, nextTreeHeight, a.getLocalScale().z);
                     a.setLocalScale(newScale);
-                }
+                }*/
             }
 
             @Override
@@ -163,13 +163,21 @@ public class CameraActivity extends AppCompatActivity {
             setUpPineTreeModel();
         });
 
+        if (authUser == null) {
+            showMessage(getString(R.string.login_message), getString(R.string.login_warning));
+            saveButton.setVisibility(View.INVISIBLE);
+        }
+
+        //location services
+        checkLocationStatus();
+
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         setUpPinusPinasterModel();
         setUpPlane();
     }
 
     private void setUpPinusPinasterModel() {
-        treeType="pinusPinaster";
+        treeType = "pinusPinaster";
         ModelRenderable.builder().setSource(this, R.raw.pinuspinaster)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
@@ -180,7 +188,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void setUpPineTreeModel() {
-        treeType="pineTree";
+        treeType = "pineTree";
         ModelRenderable.builder().setSource(this, R.raw.pinetree)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
@@ -201,12 +209,9 @@ public class CameraActivity extends AppCompatActivity {
             AnchorNode anchorNode = new AnchorNode(anchor);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
 
-            currentAnchor = anchor;
-
             if (!anchorList.isEmpty()) {
                 for (AnchorNode a : anchorList) {
-                    float dist = getDistanceBetweenAnchors(currentAnchor, a.getAnchor());
-                    if (dist < 0.8) {
+                    if (getDistanceBetweenAnchors(anchor, a.getAnchor()) < 0.8) {
                         Toast.makeText(this, getString(R.string.min_distance_warning), Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -218,23 +223,22 @@ public class CameraActivity extends AppCompatActivity {
             anchorList.add(anchorNode);
 
             if (location != null) {
-                LocationMarker layoutLocationMarker = new LocationMarker(
+                /*LocationMarker layoutLocationMarker = new LocationMarker(
                         calculateLocation(anchor, anchorNode).get(0),
                         calculateLocation(anchor, anchorNode).get(1),
                         anchorNode
                 );
+                Log.e("Object world position: ", "Location -> longitude: "+layoutLocationMarker.longitude+" \n->latitude: "+layoutLocationMarker.latitude);*/
 
                 Tree tree = new Tree(
                         calculateLocation(anchor, anchorNode).get(0),
                         calculateLocation(anchor, anchorNode).get(1),
-                        globalTreeHeight,
+                        nextTreeHeight,
                         treeType
                 );
 
                 trees.add(tree);
-
-                Log.e("Object world position: ", "Location -> longitude: "+layoutLocationMarker.longitude+" \n->latitude: "+layoutLocationMarker.latitude);
-            } else{
+            } else {
                 checkLocationStatus();
             }
         });
@@ -244,7 +248,7 @@ public class CameraActivity extends AppCompatActivity {
         TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
         node.getTranslationController().setEnabled(false);
         node.getScaleController().setEnabled(false);
-        node.setLocalScale(new Vector3(1.3f, globalTreeHeight, 1.3f));
+        node.setLocalScale(new Vector3(1.3f, nextTreeHeight, 1.3f));
         node.getRotationController().setEnabled(false);
         node.setLocalRotation(new Quaternion(0, rand.nextFloat(), 0, 1));
 
@@ -279,11 +283,11 @@ public class CameraActivity extends AppCompatActivity {
                 ((AnchorNode) hitNode.getParent()).getAnchor().detach();
             }
             hitNode.setParent(null);
-            trees.remove(trees.size()-1);
+            trees.remove(trees.size() - 1);
         }
     }
 
-    private ArrayList<Float> calculateLocation(Anchor anchor, AnchorNode anchorNode){
+    private ArrayList<Float> calculateLocation(Anchor anchor, AnchorNode anchorNode) {
         Pose objectPose = anchor.getPose();
         Pose cameraPose = arFragment.getArSceneView().getArFrame().getCamera().getPose();
 
@@ -291,8 +295,8 @@ public class CameraActivity extends AppCompatActivity {
         float distanceY = objectPose.ty() - cameraPose.ty();
 
 
-        float newLatitude  = (float) (location.getLatitude()  + (distanceY / R_EARTH) * (180 / Math.PI));
-        float newLongitude  = (float) (location.getLongitude() + (distanceX / R_EARTH) * (180 / Math.PI) / Math.cos(location.getLatitude() * Math.PI/180));
+        float newLatitude = (float) (location.getLatitude() + (distanceY / R_EARTH) * (180 / Math.PI));
+        float newLongitude = (float) (location.getLongitude() + (distanceX / R_EARTH) * (180 / Math.PI) / Math.cos(location.getLatitude() * Math.PI / 180));
 
         ArrayList<Float> objectLocation = new ArrayList<>();
         objectLocation.add(newLatitude);
@@ -380,10 +384,12 @@ public class CameraActivity extends AppCompatActivity {
     public void checkLocationStatus() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{
-                            android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    100);
+            showMessage(getString(R.string.location_message), getString(R.string.access_warning));
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            saveButton.setVisibility(View.INVISIBLE);
             return;
+        } else {
+            saveButton.setVisibility(View.VISIBLE);
         }
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -391,6 +397,84 @@ public class CameraActivity extends AppCompatActivity {
         if (location == null) {
             location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         }
+    }
+
+    private void saveProjectDialog() {
+        if (!trees.isEmpty()) {
+            if (projectName.isEmpty() || projectDescription.isEmpty()) {
+                Context context = CameraActivity.this;
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                LinearLayout layout = new LinearLayout(context);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final EditText inputProjectName = new EditText(context);
+                inputProjectName.setHint(getString(R.string.insert_project_name));
+                layout.addView(inputProjectName);
+
+                final EditText inputProjectDescription = new EditText(context);
+                inputProjectDescription.setHint(getString(R.string.insert_project_description));
+                layout.addView(inputProjectDescription);
+                builder.setView(layout);
+
+                builder.setPositiveButton("OK", (dialog, which) -> {
+                    projectName = inputProjectName.getText().toString();
+                    projectDescription = inputProjectDescription.getText().toString();
+
+                    if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
+                        projects.orderByChild("name").equalTo(projectName).addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            showMessage(getString(R.string.project_exists), getString(R.string.project_exists_warning));
+                                        } else {
+                                            Project newProject = new Project(projectName, projectDescription, sharedPreferences.getString("username", null));
+                                            DatabaseReference newRef = projects.child(projectName);
+                                            newRef.setValue(newProject);
+                                            users.child(sharedPreferences.getString("username", null)).child("projects").child(projectName).setValue("full");
+                                            saveProjectTrees();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                    }
+                                }
+                        );
+                    } else {
+                        showMessage(getString(R.string.empty_fields), getString(R.string.empty_fields_warning));
+                    }
+                });
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+                builder.show();
+            } else {
+                saveProjectTrees();
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.no_trees), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveProjectTrees() {
+        projects.child(projectName).child("trees").removeValue();
+        int c = 0;
+        for (Tree tree : trees
+        ) {
+            projects.child(projectName).child("trees").child(String.valueOf(c)).setValue(tree);
+            c++;
+        }
+        Toast.makeText(this, getString(R.string.project) + " " + projectName + " " + getString(R.string.saved), Toast.LENGTH_LONG).show();
+    }
+
+    public void showMessage(String message, String warning) {
+        AlertDialog alertDialog = new AlertDialog.Builder(CameraActivity.this).create();
+        alertDialog.setTitle(warning);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
     }
 
     @Override

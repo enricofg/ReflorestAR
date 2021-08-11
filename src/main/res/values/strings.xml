@@ -26,7 +26,7 @@
     <string name="min_height">Mininum height</string>
     <string name="max_height_abbr">Max. height</string>
     <string name="max_height">Maximum height</string>
-    <string name="tree_height">Trees height:</string>
+    <string name="tree_height">Next tree height:</string>
     <string name="load_error">Tree image is downloading.</string>
     <string name="planted_trees">Planted trees</string>
     <string name="reforested_area">Reforested area</string>
@@ -51,8 +51,10 @@
     <string name="empty_fields_warning">Fields are empty</string>
     <string name="email_exists">An account with this email already exists.</string>
     <string name="username_exists">An account with this username already exists.</string>
+    <string name="project_exists">A project with this name already exists.</string>
     <string name="email_exists_warning">Email exists</string>
     <string name="username_exists_warning">Username exists</string>
+    <string name="project_exists_warning">Project name is taken</string>
     <string name="invalid_email">Email format is incorrect.</string>
     <string name="password_error">The inserted passwords do not match.</string>
     <string name="username_error">Username must be at least 6 characters long and can only include letters, numbers, ".", "_" and "-".</string>
@@ -60,6 +62,7 @@
     <string name="name_error">Name must be at least 3 characters long and can only include letters and "-".</string>
     <string name="name_error2">Name must not be longer than 50 characters.</string>
     <string name="user_created">User created successfully. You will now be redirected to your profile page.</string>
+    <string name="project_created">Project created successfully.</string>
     <string name="success">Success</string>
     <string name="not_found">No user with these credentials was found.</string>
     <string name="not_found_warning">User not found</string>
@@ -70,7 +73,7 @@
     <string name="edit_profile">Edit name</string>
     <string name="upload_image">Upload profile image</string>
     <string name="remove_image">Remove profile image</string>
-    <string name="insert_name">Insert new name</string>
+    <string name="insert_name">Insert new name:</string>
     <string name="login_error">There was an error logging in. Please try again.</string>
     <string name="about">About</string>
     <string name="empty_projects">It seems like you don\'t have any projects yet.</string>
@@ -86,4 +89,15 @@
     <string name="confirm_user">Confirm this is the user you wish to share the project with:</string>
     <string name="share_error">You cannot share a project with yourself.</string>
     <string name="save">Save project</string>
+    <string name="insert_project_name">Insert project name:</string>
+    <string name="insert_project_description">Insert project description:</string>
+    <string name="project">Project </string>
+    <string name="saved"> saved.</string>
+    <string name="no_trees">No trees have been planted.</string>
+    <string name="login_warning">Please log in.</string>
+    <string name="login_message">To be able save your project you must be logged in. No changes will be saved.</string>
+    <string name="access_warning">Please allow access.</string>.
+    <string name="camera_message">To be able to reforest you must allow access to the camera.</string>
+    <string name="location_message">To be able save your project you must allow access to your location.</string>
+    <string name="pfp_message">To be able to change your picture you must allow access to your gallery.</string>
 </resources>

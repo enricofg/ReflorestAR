@@ -3,16 +3,20 @@ package com.example.reflorestar.ui.profile;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -169,8 +173,14 @@ public class ProfileFragment extends Fragment {
 
     protected boolean settingsMenuClick(MenuItem item) {
         if (item.getItemId() == R.id.profile_upload_image) {
-            launchUploadImageDialog();
-            return true;
+            if (ContextCompat.checkSelfPermission(root.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                showMessage(getString(R.string.pfp_message), getString(R.string.access_warning));
+                requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false;
+            } else{
+                launchUploadImageDialog();
+                return true;
+            }
         } else if (item.getItemId() == R.id.profile_remove_image) {
             removeProfileImage();
             return true;
@@ -245,5 +255,14 @@ public class ProfileFragment extends Fragment {
     private void removeProfileImage() {
         users.child(user.username).child("photo").setValue("");
         paramUserImage.setImageResource(R.drawable.ic_user);
+    }
+
+    public void showMessage(String message, String warning) {
+        AlertDialog alertDialog = new AlertDialog.Builder(root.getContext()).create();
+        alertDialog.setTitle(warning);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
     }
 }
