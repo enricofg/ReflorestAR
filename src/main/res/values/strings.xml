@@ -3,7 +3,7 @@
     <string name="title_catalog">Catalog</string>
     <string name="title_camera">Reforest</string>
     <string name="title_profile">Profile</string>
-    <string name="title_maps">Maps</string>
+    <string name="title_maps">Map</string>
     <string name="title_projects">Projects</string>
     <string name="search">Search</string>
     <string name="example">Example</string>
@@ -100,4 +100,12 @@
     <string name="camera_message">To be able to reforest you must allow access to the camera.</string>
     <string name="location_message">To be able save your project you must allow access to your location.</string>
     <string name="pfp_message">To be able to change your picture you must allow access to your gallery.</string>
+    <string name="ar_configurations">Options</string>
+    <string name="tree_type">Tree type:</string>
+    <string name="trees_quantity">Number of trees:</string>
+    <string name="delete_trees">Delete all trees</string>
+    <string name="undo">Undo last placement</string>
+    <string name="available_areas">Available areas</string>
+    <string name="load_project">Load project</string>
+    <string name="loaded"> loaded.</string>
 </resources>

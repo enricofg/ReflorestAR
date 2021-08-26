@@ -19,8 +19,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_buttonwhitebg_greenstroke" />
-                            <entry key="sourceFile" value="C:\proj\projFinal\assets\vectors\Rectangle 13buttonWhiteBG_GreenStroke.svg" />
+                            <entry key="outputName" value="ic_female_gardener" />
+                            <entry key="sourceFile" value="C:\proj\projFinal\assets\vectors\female_gardener.svg" />
                           </map>
                         </option>
                       </PersistentState>

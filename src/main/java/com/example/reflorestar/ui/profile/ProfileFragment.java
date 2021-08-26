@@ -114,7 +114,7 @@ public class ProfileFragment extends Fragment {
                 if (userProjects != null) {
                     paramProjects.setText(String.valueOf(userProjects.size()));
                     userProjects.forEach((key, value) ->
-                            projects.child(key).child("trees").addListenerForSingleValueEvent(new ValueEventListener() {
+                            projects.child(key).child("trees_android").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
                                     if(dataSnapshot.exists()){
@@ -257,7 +257,7 @@ public class ProfileFragment extends Fragment {
         paramUserImage.setImageResource(R.drawable.ic_user);
     }
 
-    public void showMessage(String message, String warning) {
+    private void showMessage(String message, String warning) {
         AlertDialog alertDialog = new AlertDialog.Builder(root.getContext()).create();
         alertDialog.setTitle(warning);
         alertDialog.setMessage(message);

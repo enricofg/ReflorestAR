@@ -44,17 +44,23 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <Button
+            <!--            <Button
                 android:id="@+id/buttonSaveProject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="45dp"
                 android:layout_marginEnd="45dp"
                 android:layout_weight="1"
                 android:background="@drawable/buttonstyle"
                 android:text="@string/save"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:translationY="7dp" />-->
+
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -68,8 +74,8 @@
                     android:layout_height="60dp"
                     android:background="#00000000"
                     android:drawableStart="@drawable/baseline_settings_36"
-                    android:drawableTint="@color/colorLight"
 
+                    android:drawableTint="@color/colorLight"
                     android:gravity="end"
                     android:paddingStart="14dp" />
             </LinearLayout>
@@ -83,56 +89,108 @@
             android:background="@drawable/ar_background_curved_l"
             android:orientation="vertical"
             android:paddingTop="10dp"
-            android:paddingBottom="20dp">
+            android:paddingBottom="30dp">
 
             <TextView
-                android:id="@+id/textView13"
+                android:id="@+id/textView22"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="4dp"
-                android:text="@string/tree_height"
+                android:layout_marginBottom="6dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="@string/ar_configurations"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/colorLight"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="25dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/buttonSaveProject"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#00FFFFFF"
+                        android:drawableTop="@drawable/baseline_save_24"
+                        android:drawablePadding="6dp"
+                        android:text="@string/save"
+                        android:textColor="@color/colorLight" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/buttonUndo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#00FFFFFF"
+                        android:drawableTop="@drawable/round_undo_24"
+                        android:drawablePadding="6dp"
+                        android:text="@string/undo"
+                        android:textColor="@color/colorLight" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/buttonDeleteAll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#00FFFFFF"
+                        android:drawableTop="@drawable/baseline_delete_24"
+                        android:drawablePadding="6dp"
+                        android:text="@string/delete_trees"
+                        android:textColor="@color/colorLight" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/tree_type"
                 android:textColor="@color/colorLight"
                 android:textSize="18sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="14dp"
-                android:orientation="horizontal"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <SeekBar
-                        android:id="@+id/seekBarTreeQuantity"
-                        android:layout_width="match_parent"
-                        android:layout_height="38dp"
-                        android:layout_marginStart="88dp"
-                        android:layout_marginEnd="88dp"
-                        android:layerType="software"
-                        android:scaleX="2"
-                        android:scaleY="2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_marginBottom="25dp"
                 android:orientation="horizontal"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp">
 
                 <LinearLayout
+                    android:id="@+id/optionTree1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
@@ -159,6 +217,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/optionTree2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -186,60 +245,73 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/tree_height"
+                android:textColor="@color/colorLight"
+                android:textSize="18sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="110dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="3dp"
                 android:layout_marginBottom="20dp"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/modelOptions"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <Button
-                        android:id="@+id/buttonElmTree"
-                        android:layout_width="105dp"
-                        android:layout_height="100dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="25dp"
-                        android:background="@drawable/ic_treeiconsmallmodelbg"
-                        android:text="Elm Tree"
-                        android:textColor="#000000"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/buttonPineTree"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <Button
-                        android:id="@+id/buttonPineTree"
-                        android:layout_width="105dp"
-                        android:layout_height="100dp"
-                        android:background="@drawable/ic_treeiconlargemodelbg_focus"
-                        android:text="@string/pinus_pinaster"
-                        android:textAllCaps="false"
-                        android:textColor="#000000"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                    <SeekBar
+                        android:id="@+id/seekBarTreeQuantity"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:layout_marginStart="88dp"
+                        android:layout_marginEnd="88dp"
+                        android:layerType="software"
+                        android:scaleX="2"
+                        android:scaleY="2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <Button
-                        android:id="@+id/buttonThree"
-                        android:layout_width="105dp"
-                        android:layout_height="100dp"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginEnd="20dp"
-                        android:background="@drawable/ic_treeiconsmallmodelbg"
-                        android:text="Third Option"
-                        android:textColor="#000000"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/buttonPineTree"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/trees_quantity"
+                android:textColor="@color/colorLight"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal">
+
+                <NumberPicker
+                    android:id="@+id/treeQuantPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:theme="@style/AppTheme.NumberPicker" />
             </LinearLayout>
 
         </LinearLayout>

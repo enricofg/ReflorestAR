@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +26,23 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapsFragment extends Fragment {
+
+    private DatabaseReference mDatabase, areas;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -42,42 +55,61 @@ public class MapsFragment extends Fragment {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
-/*        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            LatLng pinhal = new LatLng(39.76, -9.01);
-            googleMap.addMarker(new MarkerOptions().position(pinhal).title("Pinhal do Rei"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(pinhal));
-        }*/
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
             List<PatternItem> pattern = Arrays.asList(
                     new Dot(), new Gap(20), new Dash(30), new Gap(20));
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            areas = mDatabase.child("areas");
 
-            // Instantiates a new Polygon object and adds points to define a rectangle
-            PolygonOptions polygonOptions = new PolygonOptions()
-                    .add(new LatLng(39.879511, -8.970974),
-                            new LatLng(39.88052450522114, -8.956372369118228),
-                            new LatLng(39.858522059150246, -8.944270241899925),
-                            new LatLng(39.859378573770336, -8.92753325724833),
-                            new LatLng(39.837830689435364, -8.910452949834646),
-                            new LatLng(39.815246767611804, -8.903941097804099),
-                            new LatLng(39.726014423962454, -8.966976446142134),
-                            new LatLng(39.749561409042684, -9.03515951866806),
-                            new LatLng(39.879511, -8.970974));
+            areas.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                    HashMap<String, Object> areasList = (HashMap<String, Object>) dataSnapshot.getValue();
+                    //ArrayList<HashMap<String, Object>> areasList = (ArrayList<HashMap<String, Object>>) dataSnapshot.getValue();
 
-            // Get back the mutable Polygon
-            Polygon polygon = googleMap.addPolygon(polygonOptions);
-            polygon.setStrokeColor(0xaaFF7913);
-            polygon.setFillColor(0x44FF7913);
-            polygon.setStrokeWidth(5);
-            polygon.setStrokePattern(pattern);
+                    if(areasList!=null){
+                        for (Map.Entry<String,Object> entry:areasList.entrySet()
+                             ) {
+                            //instantiate lat lng list
+                            ArrayList<LatLng> latLngs = new ArrayList<>();
 
-            // Position the map's camera near Alice Springs in the center of Australia,
-            // and set the zoom factor so most of Australia shows on the screen.
-            LatLng pinhal = new LatLng(39.76, -9.01);
-            googleMap.addMarker(new MarkerOptions().position(pinhal).title("Pinhal do Rei"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.76, -9.01), 10));
+                            //Get area Map (Java class)
+                            Map area = (Map) entry.getValue();
+
+                            //get area's vertices
+                            ArrayList<HashMap<String,Object>> vertices = (ArrayList<HashMap<String,Object>>) area.get("vertexs");
+                            for (HashMap<String,Object> vertex:vertices
+                                 ) {
+                                latLngs.add(new LatLng((double) vertex.get("latitude"),(double) vertex.get("longitude")));
+                            }
+
+                            //Instantiates a new Polygon object and adds points to define a rectangle
+                            PolygonOptions polygonOptions = new PolygonOptions();
+                            for (int i = 0; i < latLngs.size(); i++) {
+                                polygonOptions.add(latLngs.get(i));
+                            }
+                            polygonOptions.add(latLngs.get(0)); //close the polygon with initial coordinate
+
+                            // Get back the mutable Polygon
+                            Polygon polygon = googleMap.addPolygon(polygonOptions);
+                            polygon.setStrokeColor(0xaaFF7913); //0xaa88B04B
+                            polygon.setFillColor(0x44FF7913); //0x4488B04B
+                            polygon.setStrokeWidth(5);
+                            polygon.setStrokePattern(pattern);
+
+                            googleMap.addMarker(new MarkerOptions().position(latLngs.get(0)).title((String) area.get("full_nome")));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(0), 10));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                }
+            });
         }
     };
 

@@ -398,6 +398,20 @@
 
     </ScrollView>
 
+    <Button
+        android:id="@+id/buttonLoadProject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="28dp"
+        android:background="#00FFFFFF"
+        android:drawableLeft="@drawable/baseline_refresh_36"
+        android:drawablePadding="6dp"
+        android:text="@string/load_project"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

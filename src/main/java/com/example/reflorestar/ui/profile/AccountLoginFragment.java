@@ -131,7 +131,7 @@ public class AccountLoginFragment extends Fragment {
         }
     }
 
-    public void showMessage(String message, String warning) {
+    private void showMessage(String message, String warning) {
         AlertDialog alertDialog = new AlertDialog.Builder(root.getContext()).create();
         alertDialog.setTitle(warning);
         alertDialog.setMessage(message);

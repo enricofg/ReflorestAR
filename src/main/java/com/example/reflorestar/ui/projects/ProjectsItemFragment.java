@@ -51,7 +51,7 @@ import java.util.HashMap;
 public class ProjectsItemFragment extends Fragment {
 
     private ListItemAdapter adapter;
-    private Button backButton;
+    private Button backButton, buttonLoadProject;
     private String paramProjectName, paramDescription, paramSize, paramStatus, paramOwnerName, paramOwnerUsername, paramOwnerEmail, paramPhoto, authUser;
     private TextView shareMessage, usernameWarning;
     private TextInputLayout usernameInput;
@@ -104,6 +104,7 @@ public class ProjectsItemFragment extends Fragment {
         usernameInput = root.findViewById(R.id.insertUsername);
         usernameText = usernameInput.getEditText().getText();
         usernameWarning = root.findViewById(R.id.usernameWarning2);
+        buttonLoadProject = root.findViewById(R.id.buttonLoadProject);
 
         authUser = sharedPreferences.getString("username", null);
         if (authUser == null || !authUser.equals(paramOwnerUsername)) {
@@ -158,7 +159,7 @@ public class ProjectsItemFragment extends Fragment {
         ownerUsername.setText(this.paramOwnerUsername);
         ownerEmail.setText(this.paramOwnerEmail);
 
-        projects.child(this.paramProjectName).child("trees").addListenerForSingleValueEvent(new ValueEventListener() {
+        projects.child(this.paramProjectName).child("trees_android").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
                 ArrayList<Object> projectTrees = (ArrayList<Object>) dataSnapshot.getValue();
@@ -177,7 +178,6 @@ public class ProjectsItemFragment extends Fragment {
 
             }
         });
-
 
         if (!this.paramPhoto.isEmpty()) {
             ownerPhoto.setImageBitmap(getImageFromBase64EncodedString(this.paramPhoto));

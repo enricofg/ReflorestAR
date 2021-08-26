@@ -31,7 +31,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="350dp">
+            android:layout_height="360dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,7 +78,7 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="275dp"
@@ -102,6 +102,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/title_projects"
+                            android:textAlignment="center"
                             android:textSize="20sp" />
 
                         <TextView
@@ -109,6 +110,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
+                            android:textAlignment="center"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -125,6 +127,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/planted_trees"
+                            android:textAlignment="center"
                             android:textSize="20sp" />
 
                         <TextView
@@ -132,6 +135,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
+                            android:textAlignment="center"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -148,6 +152,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/user_type"
+                            android:textAlignment="center"
                             android:textSize="20sp" />
 
                         <TextView
@@ -155,6 +160,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
+                            android:textAlignment="center"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
                             android:textStyle="bold" />

@@ -7,16 +7,17 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.text.InputType;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -26,17 +27,20 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.reflorestar.classes.Project;
 import com.example.reflorestar.classes.Tree;
+import com.example.reflorestar.classes.User;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
+import com.google.ar.core.Plane;
 import com.google.ar.core.Pose;
+import com.google.ar.core.Session;
+import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.Color;
-import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.database.DataSnapshot;
@@ -48,22 +52,23 @@ import com.google.firebase.database.ValueEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
-
-import uk.co.appoly.arcorelocation.LocationScene;
 
 public class CameraActivity extends AppCompatActivity {
 
     private static final float R_EARTH = 6378;
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
-    private LinearLayout containerOptions;
+    private LinearLayout containerOptions, optionTree1, optionTree2;
     private SeekBar sliderQuant;
-    private Button closeButton, saveButton, configButton, pinusPinasterButton, pineTree2Button;
+    private Button closeButton, saveButton, configButton, pinusPinasterButton, pineTree2Button, deleteAllButton, undoButton;
+    private NumberPicker treeQuantityPicker;
     private SharedPreferences sharedPreferences;
     private DatabaseReference users, projects;
-    private String projectName = "";
-    private String projectDescription = "";
+    private String projectName = "", projectDescription = "";
 
     //tree variables
     private ArrayList<AnchorNode> anchorList;
@@ -71,10 +76,10 @@ public class CameraActivity extends AppCompatActivity {
     private static Random rand;
     private String treeType;
     private ArrayList<Tree> trees = new ArrayList<>();
-
-    //ARCore-Location scene
-    private LocationScene locationScene;
+    private Pose lastPose;
     private Location location;
+    private int lastNumber;
+    private boolean undoFlag, loaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,17 +107,28 @@ public class CameraActivity extends AppCompatActivity {
 
         //buttons
         closeButton = findViewById(R.id.closeButton);
-        saveButton = findViewById(R.id.buttonSaveProject);
         configButton = findViewById(R.id.configButtonCam);
+        saveButton = findViewById(R.id.buttonSaveProject);
+        deleteAllButton = findViewById(R.id.buttonDeleteAll);
+        undoButton = findViewById(R.id.buttonUndo);
         pinusPinasterButton = findViewById(R.id.buttonPinusPinaster);
         pineTree2Button = findViewById(R.id.buttonTree2);
+        optionTree1 = findViewById(R.id.optionTree1);
+        optionTree2 = findViewById(R.id.optionTree2);
 
         //tree controls
         nextTreeHeight = 1.3f;
         rand = new Random();
+        treeQuantityPicker = findViewById(R.id.treeQuantPicker);
+        treeQuantityPicker.setMinValue(1);
+        treeQuantityPicker.setMaxValue(100);
+        treeQuantityPicker.setEnabled(true);
 
         //node list controls
         anchorList = new ArrayList();
+        undoFlag = false;
+        lastNumber = 0;
+        loaded = false;
 
         //close camera
         closeButton.setOnClickListener(view -> finish());
@@ -137,12 +153,6 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 nextTreeHeight = 1.3f + progress * 0.01f;
-                //Log.e("Progress Value:", String.valueOf(globalTreeHeight));
-
-                /*for (AnchorNode a : anchorList) {
-                    Vector3 newScale = new Vector3(a.getLocalScale().x, nextTreeHeight, a.getLocalScale().z);
-                    a.setLocalScale(newScale);
-                }*/
             }
 
             @Override
@@ -157,10 +167,23 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         pinusPinasterButton.setOnClickListener(view -> {
+            optionTree1.setBackground(getDrawable(R.drawable.ic_buttongreenbg_greenstroke));
+            optionTree2.setBackground(getDrawable(R.drawable.ic_buttonwhitebg_greenstroke));
             setUpPinusPinasterModel();
         });
+
         pineTree2Button.setOnClickListener(view -> {
+            optionTree2.setBackground(getDrawable(R.drawable.ic_buttongreenbg_greenstroke));
+            optionTree1.setBackground(getDrawable(R.drawable.ic_buttonwhitebg_greenstroke));
             setUpPineTreeModel();
+        });
+
+        undoButton.setOnClickListener(view -> {
+            undoLastAction();
+        });
+
+        deleteAllButton.setOnClickListener(view -> {
+            deleteAllTrees();
         });
 
         if (authUser == null) {
@@ -172,6 +195,14 @@ public class CameraActivity extends AppCompatActivity {
         checkLocationStatus();
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+
+        projectName="test";
+        if (!projectName.isEmpty()) {
+            arFragment.getArSceneView().getScene().addOnUpdateListener(this::loadProjectOnDetectedPlane);
+        }
+
+        //Start with Pinus Pinaster tree selected
+        optionTree1.setBackground(getDrawable(R.drawable.ic_buttongreenbg_greenstroke));
         setUpPinusPinasterModel();
         setUpPlane();
     }
@@ -200,48 +231,98 @@ public class CameraActivity extends AppCompatActivity {
 
     private void setUpPlane() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-            if (locationScene == null) {
-                locationScene = new LocationScene(this, this, arFragment.getArSceneView());
-            }
+            int i = 0;
+            Session session = arFragment.getArSceneView().getSession();
 
-            // Creating Anchor
-            Anchor anchor = hitResult.createAnchor();
-            AnchorNode anchorNode = new AnchorNode(anchor);
-            anchorNode.setParent(arFragment.getArSceneView().getScene());
+            do {
+                Anchor anchor;
+                if (i == 0) {
+                    lastPose = hitResult.getHitPose();
+                    anchor = session.createAnchor(lastPose);
+                } else {
+                    boolean distanceCheck = false;
+                    Pose newPose;
+                    do {
+                        newPose = calculateRandomNewPose();
+                        for (int j = 0; j < anchorList.size(); j++) {
+                            if (getDistanceBetweenPoseAndAnchor(newPose, anchorList.get(j).getAnchor()) > 0.8) {
+                                distanceCheck = true;
+                            } else {
+                                distanceCheck = false;
+                            }
+                        }
+                    } while (!distanceCheck);
 
-            if (!anchorList.isEmpty()) {
-                for (AnchorNode a : anchorList) {
-                    if (getDistanceBetweenAnchors(anchor, a.getAnchor()) < 0.8) {
-                        Toast.makeText(this, getString(R.string.min_distance_warning), Toast.LENGTH_LONG).show();
-                        return;
+                    anchor = session.createAnchor(newPose);
+                    lastPose = newPose;
+                }
+
+                AnchorNode anchorNode = new AnchorNode(anchor);
+                anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+                if (!anchorList.isEmpty()) {
+                    for (AnchorNode a : anchorList) {
+                        if (getDistanceBetweenAnchors(anchor, a.getAnchor()) < 0.8) {
+                            if (treeQuantityPicker.getValue() == 1) {
+                                Toast.makeText(this, getString(R.string.min_distance_warning), Toast.LENGTH_LONG).show();
+                            }
+                            continue;
+                        }
                     }
                 }
-                //addLineBetweenHits(currentAnchorNode, lastAnchorNode);
-            }
 
-            createModel(anchorNode);
-            anchorList.add(anchorNode);
+                if (treeType == "pinusPinaster") {
+                    setUpPinusPinasterModel();
+                } else {
+                    setUpPineTreeModel();
+                }
 
-            if (location != null) {
-                /*LocationMarker layoutLocationMarker = new LocationMarker(
-                        calculateLocation(anchor, anchorNode).get(0),
-                        calculateLocation(anchor, anchorNode).get(1),
-                        anchorNode
-                );
-                Log.e("Object world position: ", "Location -> longitude: "+layoutLocationMarker.longitude+" \n->latitude: "+layoutLocationMarker.latitude);*/
+                createModel(anchorNode);
+                anchorList.add(anchorNode);
 
-                Tree tree = new Tree(
-                        calculateLocation(anchor, anchorNode).get(0),
-                        calculateLocation(anchor, anchorNode).get(1),
-                        nextTreeHeight,
-                        treeType
-                );
+                if (location != null) {
+                    Tree tree = new Tree(
+                            calculateLocation(anchor).get(0),
+                            calculateLocation(anchor).get(1),
+                            nextTreeHeight,
+                            treeType,
+                            lastPose.tx(),
+                            lastPose.ty(),
+                            lastPose.tz(),
+                            lastPose.qx(),
+                            lastPose.qy(),
+                            lastPose.qz(),
+                            lastPose.qw()
+                    );
 
-                trees.add(tree);
-            } else {
-                checkLocationStatus();
-            }
+                    trees.add(tree);
+                } else {
+                    checkLocationStatus();
+                }
+
+                i++;
+            } while (i < treeQuantityPicker.getValue());
+            lastNumber = treeQuantityPicker.getValue();
+            undoFlag = true;
         });
+    }
+
+    @NotNull
+    private Pose calculateRandomNewPose() {
+        float randomX = 0, randomZ = 0;
+
+        do {
+            randomX = (float) (Math.random() * (1.0 + 1.0) - 1.0); //random between -1 and 1
+        }
+        while (randomX < 0.8 && randomX > -0.8);
+
+        do {
+            randomZ = (float) (Math.random() * (1.0 + 1.0) - 1.0); //random between -1 and 1
+        }
+        while (randomZ < 0.8 && randomZ > -0.8);
+
+        Pose newPose = new Pose(new float[]{(float) (lastPose.tx() + randomX), lastPose.ty(), (float) (lastPose.tz() + randomZ)}, lastPose.getRotationQuaternion());
+        return newPose;
     }
 
     private void createModel(AnchorNode anchorNode) {
@@ -287,7 +368,7 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Float> calculateLocation(Anchor anchor, AnchorNode anchorNode) {
+    private ArrayList<Float> calculateLocation(Anchor anchor) {
         Pose objectPose = anchor.getPose();
         Pose cameraPose = arFragment.getArSceneView().getArFrame().getCamera().getPose();
 
@@ -317,39 +398,260 @@ public class CameraActivity extends AppCompatActivity {
         return (float) Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
     }
 
-    private void addLineBetweenHits(AnchorNode currentAnchorNode, AnchorNode lastAnchorNode) {
-        if (lastAnchorNode != null) {
-            currentAnchorNode.setParent(arFragment.getArSceneView().getScene());
-            Vector3 point1, point2;
-            point1 = lastAnchorNode.getWorldPosition();
-            point2 = currentAnchorNode.getWorldPosition();
+    private float getDistanceBetweenPoseAndAnchor(Pose objectPose1, Anchor comparingAnchor) {
+        Pose objectPose2 = comparingAnchor.getPose();
 
-    /*
-        First, find the vector extending between the two points and define a look rotation
-        in terms of this Vector.
-    */
-            final Vector3 difference = Vector3.subtract(point1, point2);
-            final Vector3 directionFromTopToBottom = difference.normalized();
-            final Quaternion rotationFromAToB =
-                    Quaternion.lookRotation(directionFromTopToBottom, Vector3.up());
-            MaterialFactory.makeOpaqueWithColor(getApplicationContext(), new Color(android.graphics.Color.parseColor("#476A30")))
-                    .thenAccept(
-                            material -> {
-                            /* Then, create a rectangular prism, using ShapeFactory.makeCube() and use the difference vector
-                                   to extend to the necessary length.  */
-                                ModelRenderable model = ShapeFactory.makeCube(
-                                        new Vector3(.01f, .01f, difference.length()),
-                                        Vector3.zero(), material);
-                            /* Last, set the world rotation of the node to the rotation calculated earlier and set the world position to
-                                   the midpoint between the given points . */
-                                Node node = new Node();
-                                node.setParent(currentAnchorNode);
-                                node.setRenderable(model);
-                                node.setWorldPosition(Vector3.add(point1, point2).scaled(.5f));
-                                node.setWorldRotation(rotationFromAToB);
-                            }
-                    );
+        float distanceX = objectPose1.tx() - objectPose2.tx();
+        float distanceY = objectPose1.ty() - objectPose2.ty();
+        float distanceZ = objectPose1.tz() - objectPose2.tz();
+
+        //straight line distance in meters
+        return (float) Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
+    }
+
+    private void undoLastAction() {
+        if (undoFlag && anchorList.size() > 0) {
+            //undo last action
+            trees.subList(trees.size() - lastNumber, trees.size()).clear();
+
+            for (int i = 1; i <= lastNumber; i++) {
+                AnchorNode nodeToRemove = anchorList.get(anchorList.size() - i);
+                arFragment.getArSceneView().getScene().removeChild(nodeToRemove);
+                AnchorNode anchorNodeParent = (AnchorNode) nodeToRemove.getParent();
+                if (anchorNodeParent != null) {
+                    anchorList.remove(anchorNodeParent);
+                    anchorNodeParent.getAnchor().detach();
+                }
+                nodeToRemove.setParent(null);
+            }
+
+            undoFlag = false;
+            lastNumber = 0;
         }
+    }
+
+    private void deleteAllTrees() {
+        trees.clear();
+        for (AnchorNode anchorNode : anchorList
+        ) {
+            arFragment.getArSceneView().getScene().removeChild(anchorNode);
+            AnchorNode anchorNodeParent = (AnchorNode) anchorNode.getParent();
+            if (anchorNodeParent != null) {
+                anchorList.remove(anchorNodeParent);
+                anchorNodeParent.getAnchor().detach();
+            }
+            anchorNode.setParent(null);
+        }
+        undoFlag = false;
+        lastNumber = 0;
+    }
+
+    //Get location
+    public void checkLocationStatus() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            showMessage(getString(R.string.location_message), getString(R.string.access_warning));
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            saveButton.setVisibility(View.INVISIBLE);
+            return;
+        } else {
+            saveButton.setVisibility(View.VISIBLE);
+        }
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location == null) {
+            location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        }
+    }
+
+    private void saveProjectDialog() {
+        if (!trees.isEmpty()) {
+            if (projectName.isEmpty()) {
+                Context context = CameraActivity.this;
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                LinearLayout layout = new LinearLayout(context);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final EditText inputProjectName = new EditText(context);
+                inputProjectName.setHint(getString(R.string.insert_project_name));
+                layout.addView(inputProjectName);
+
+                final EditText inputProjectDescription = new EditText(context);
+                inputProjectDescription.setHint(getString(R.string.insert_project_description));
+                layout.addView(inputProjectDescription);
+                builder.setView(layout);
+
+                builder.setPositiveButton("OK", (dialog, which) -> {
+                    projectName = inputProjectName.getText().toString();
+                    projectDescription = inputProjectDescription.getText().toString();
+
+                    if (!projectName.isEmpty()) {
+                        projects.orderByChild("name").equalTo(projectName).addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            showMessage(getString(R.string.project_exists), getString(R.string.project_exists_warning));
+                                            projectName = "";
+                                            projectDescription = "";
+                                        } else {
+                                            Project newProject = new Project(projectName, projectDescription, sharedPreferences.getString("username", null));
+                                            DatabaseReference newRef = projects.child(projectName);
+                                            newRef.setValue(newProject);
+                                            users.child(sharedPreferences.getString("username", null)).child("projects").child(projectName).setValue("full");
+                                            saveProjectTrees();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                    }
+                                }
+                        );
+                    } else {
+                        showMessage(getString(R.string.empty_fields), getString(R.string.empty_fields_warning));
+                    }
+                });
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+                builder.show();
+            } else {
+                saveProjectTrees();
+            }
+        } else if (trees.isEmpty() && !projectName.isEmpty()) { //existing project
+            saveProjectTrees();
+        } else {
+            Toast.makeText(this, getString(R.string.no_trees), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveProjectTrees() {
+        projects.child(projectName).child("trees_android").removeValue();
+        int c = 0;
+        for (Tree tree : trees
+        ) {
+            projects.child(projectName).child("trees_android").child(String.valueOf(c)).setValue(tree);
+            c++;
+        }
+        Toast.makeText(this, getString(R.string.project) + " " + projectName + " " + getString(R.string.saved), Toast.LENGTH_LONG).show();
+    }
+
+    private void showMessage(String message, String warning) {
+        AlertDialog alertDialog = new AlertDialog.Builder(CameraActivity.this).create();
+        alertDialog.setTitle(warning);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
+    }
+
+    private void loadProjectOnDetectedPlane(FrameTime frameTime) {
+        if(!loaded) {
+            Frame frame = arFragment.getArSceneView().getArFrame();
+            Collection<Plane> planes = frame.getUpdatedTrackables(Plane.class);
+            for (Plane plane :
+                    planes) {
+                if (plane.getTrackingState() == TrackingState.TRACKING) {
+                    loadProject(projectName);
+                    loaded = true; //set loaded state to true
+                    Toast.makeText(this, getString(R.string.project) + " " + projectName + " " + getString(R.string.loaded), Toast.LENGTH_LONG).show();
+                    nextTreeHeight = 1.3f + sliderQuant.getProgress() * 0.01f; //reset tree heights to slider progress value
+                    break;
+                }
+            }
+        }
+    }
+
+    private void loadProject(String projectName) {
+        projects.child(projectName).child("trees_android").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                ArrayList<Object> projectTreesObject = (ArrayList<Object>) dataSnapshot.getValue();
+
+                if (projectTreesObject != null) {
+                    for (Object projectTree : projectTreesObject) {
+                        Tree tree = extractTreeFromString(projectTree.toString());
+                        trees.add(tree);
+                    }
+
+                    Session session = arFragment.getArSceneView().getSession();
+                    for (Tree tree :
+                            trees) {
+                        Pose pose = new Pose(new float[]{tree.tx, tree.ty, tree.tz}, new float[]{tree.qx, tree.qy, tree.qz, tree.qw});
+
+                        Anchor anchor = session.createAnchor(pose);
+                        AnchorNode anchorNode = new AnchorNode(anchor);
+                        anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+                        treeType=tree.type;
+                        if (treeType == "pinusPinaster") {
+                            setUpPinusPinasterModel();
+                        } else {
+                            setUpPineTreeModel();
+                        }
+
+                        nextTreeHeight=tree.height;
+                        createModel(anchorNode);
+                        anchorList.add(anchorNode);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private Tree extractTreeFromString(String treeToString) {
+        //parameters to extract and indexes
+        String txParam = "tx=", tyParam = "ty=", tzParam = "tz=", qxParam = "qx=", qyParam = "qy=", qzParam = "qz=", qwParam = "qw=", typeParam = "type=", heightParam = "height=", latitudeParam = "latitude=", longitudeParam = "longitude=", comma = ",";
+        int txIndex = treeToString.indexOf(txParam);
+        int tyIndex = treeToString.indexOf(tyParam);
+        int qwIndex = treeToString.indexOf(qwParam);
+        int tzIndex = treeToString.indexOf(tzParam);
+        int latitudeIndex = treeToString.indexOf(latitudeParam);
+        int qxIndex = treeToString.indexOf(qxParam);
+        int qyIndex = treeToString.indexOf(qyParam);
+        int qzIndex = treeToString.indexOf(qzParam);
+        int typeIndex = treeToString.indexOf(typeParam);
+        int heightIndex = treeToString.indexOf(heightParam);
+        int longitudeIndex = treeToString.indexOf(longitudeParam);
+        int commaIdx = treeToString.indexOf(comma);
+
+        //extract methods
+        float tx = Float.parseFloat(treeToString.substring(txIndex + txParam.length(), commaIdx)); //tx
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float ty = Float.parseFloat(treeToString.substring(tyIndex + tyParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float qw = Float.parseFloat(treeToString.substring(qwIndex + qwParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float tz = Float.parseFloat(treeToString.substring(tzIndex + tzParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float latitude = Float.parseFloat(treeToString.substring(latitudeIndex + latitudeParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float qx = Float.parseFloat(treeToString.substring(qxIndex + qxParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float qy = Float.parseFloat(treeToString.substring(qyIndex + qyParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float qz = Float.parseFloat(treeToString.substring(qzIndex + qzParam.length(), commaIdx));
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        String type = treeToString.substring(typeIndex + typeParam.length(), commaIdx);
+        commaIdx = treeToString.indexOf(comma, commaIdx + 1);
+        float height = Float.parseFloat(treeToString.substring(heightIndex + heightParam.length(), commaIdx));
+        float longitude = Float.parseFloat(treeToString.substring(longitudeIndex + longitudeParam.length(), treeToString.length() - 1));
+
+        Tree tree = new Tree(latitude, longitude, height, type, tx, ty, tz, qx, qy, qz, qw);
+
+        return tree;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     public abstract class TouchTimer implements Node.OnTouchListener {
@@ -378,107 +680,5 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         protected abstract void onTouchEnded(long touchTimeInMillis, HitTestResult hitTestResult, MotionEvent motionEvent);
-    }
-
-    //Get location
-    public void checkLocationStatus() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            showMessage(getString(R.string.location_message), getString(R.string.access_warning));
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            saveButton.setVisibility(View.INVISIBLE);
-            return;
-        } else {
-            saveButton.setVisibility(View.VISIBLE);
-        }
-
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location == null) {
-            location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        }
-    }
-
-    private void saveProjectDialog() {
-        if (!trees.isEmpty()) {
-            if (projectName.isEmpty() || projectDescription.isEmpty()) {
-                Context context = CameraActivity.this;
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                LinearLayout layout = new LinearLayout(context);
-                layout.setOrientation(LinearLayout.VERTICAL);
-
-                final EditText inputProjectName = new EditText(context);
-                inputProjectName.setHint(getString(R.string.insert_project_name));
-                layout.addView(inputProjectName);
-
-                final EditText inputProjectDescription = new EditText(context);
-                inputProjectDescription.setHint(getString(R.string.insert_project_description));
-                layout.addView(inputProjectDescription);
-                builder.setView(layout);
-
-                builder.setPositiveButton("OK", (dialog, which) -> {
-                    projectName = inputProjectName.getText().toString();
-                    projectDescription = inputProjectDescription.getText().toString();
-
-                    if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
-                        projects.orderByChild("name").equalTo(projectName).addListenerForSingleValueEvent(
-                                new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            showMessage(getString(R.string.project_exists), getString(R.string.project_exists_warning));
-                                        } else {
-                                            Project newProject = new Project(projectName, projectDescription, sharedPreferences.getString("username", null));
-                                            DatabaseReference newRef = projects.child(projectName);
-                                            newRef.setValue(newProject);
-                                            users.child(sharedPreferences.getString("username", null)).child("projects").child(projectName).setValue("full");
-                                            saveProjectTrees();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                                    }
-                                }
-                        );
-                    } else {
-                        showMessage(getString(R.string.empty_fields), getString(R.string.empty_fields_warning));
-                    }
-                });
-                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-                builder.show();
-            } else {
-                saveProjectTrees();
-            }
-        } else {
-            Toast.makeText(this, getString(R.string.no_trees), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void saveProjectTrees() {
-        projects.child(projectName).child("trees").removeValue();
-        int c = 0;
-        for (Tree tree : trees
-        ) {
-            projects.child(projectName).child("trees").child(String.valueOf(c)).setValue(tree);
-            c++;
-        }
-        Toast.makeText(this, getString(R.string.project) + " " + projectName + " " + getString(R.string.saved), Toast.LENGTH_LONG).show();
-    }
-
-    public void showMessage(String message, String warning) {
-        AlertDialog alertDialog = new AlertDialog.Builder(CameraActivity.this).create();
-        alertDialog.setTitle(warning);
-        alertDialog.setMessage(message);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                (dialog, which) -> dialog.dismiss());
-        alertDialog.show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 }
