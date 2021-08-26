@@ -102,6 +102,13 @@ public class CameraActivity extends AppCompatActivity {
         containerOptions = findViewById(R.id.containerCamOptions);
         containerOptions.setVisibility(View.GONE);
 
+        //check if project is loading through set name
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            projectName = bundle.getString("projectName");
+        }
+        Log.e("projectName", projectName);
+
         //quantity slider
         sliderQuant = findViewById(R.id.seekBarTreeQuantity);
 
@@ -196,7 +203,6 @@ public class CameraActivity extends AppCompatActivity {
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
 
-        projectName="test";
         if (!projectName.isEmpty()) {
             arFragment.getArSceneView().getScene().addOnUpdateListener(this::loadProjectOnDetectedPlane);
         }
@@ -502,6 +508,7 @@ public class CameraActivity extends AppCompatActivity {
                                             newRef.setValue(newProject);
                                             users.child(sharedPreferences.getString("username", null)).child("projects").child(projectName).setValue("full");
                                             saveProjectTrees();
+                                            projects.child(projectName).child("users").child(sharedPreferences.getString("username", null)).setValue(true);
                                         }
                                     }
 
@@ -585,10 +592,10 @@ public class CameraActivity extends AppCompatActivity {
                         AnchorNode anchorNode = new AnchorNode(anchor);
                         anchorNode.setParent(arFragment.getArSceneView().getScene());
 
-                        treeType=tree.type;
-                        if (treeType == "pinusPinaster") {
+                        //treeType=tree.type;
+                        if (tree.type == "pinusPinaster") {
                             setUpPinusPinasterModel();
-                        } else {
+                        } else if(tree.type == "pineTree"){
                             setUpPineTreeModel();
                         }
 

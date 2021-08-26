@@ -3,6 +3,7 @@ package com.example.reflorestar.ui.projects;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +34,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.reflorestar.CameraActivity;
 import com.example.reflorestar.R;
 import com.example.reflorestar.classes.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -169,8 +171,27 @@ public class ProjectsItemFragment extends Fragment {
                         for (Object projectTree : projectTrees) {
                         Log.e("Project Tree: ", projectTree.toString());
                     }*/
-                    trees.setText(String.valueOf(treeCount));
+                    if (treeCount != 0 && authUser != null) {
+                        //if accessType = "full"
+                        users.child(authUser).child("projects").child(paramProjectName).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    String projectAccess = (String) dataSnapshot.getValue();
+                                    if (projectAccess.equals("full")) {
+                                        buttonLoadProject.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 }
+                trees.setText(String.valueOf(treeCount));
             }
 
             @Override
@@ -196,6 +217,8 @@ public class ProjectsItemFragment extends Fragment {
         backButton.setOnClickListener(v -> {
             returnToProjects(fragmentContainer);
         });
+
+        buttonLoadProject.setOnClickListener(v -> openCameraActivity());
 
         return root;
     }
@@ -321,7 +344,7 @@ public class ProjectsItemFragment extends Fragment {
                     public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             String projectAccess = (String) dataSnapshot.getValue();
-                            if (paramOwnerUsername.equals(data.get(position).get("username").toString())){
+                            if (paramOwnerUsername.equals(data.get(position).get("username").toString())) {
                                 holder.txtAccessType.setText("Owner");
                             } else if (projectAccess.equals("full")) {
                                 holder.txtAccessType.setText("Full");
@@ -415,6 +438,14 @@ public class ProjectsItemFragment extends Fragment {
             dialog.show();
 
         }
+    }
+
+    private void openCameraActivity() {
+        Intent intent = new Intent(getActivity(), CameraActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("projectName", paramProjectName);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
 
