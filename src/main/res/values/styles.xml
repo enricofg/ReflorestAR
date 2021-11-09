@@ -23,4 +23,16 @@
         <item name="android:colorControlNormal">@android:color/white</item>
         <item name="android:textSize">20sp</item>
     </style>
+
+    <style name="RoundMaterialButtonTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Add attributes here -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textAppearanceButton">@style/ShapeAppearanceOverlay.MyApp.Button.Rounded</item>
+    </style>
+    <style name="ShapeAppearanceOverlay.MyApp.Button.Rounded" parent="Theme.MaterialComponents.Light">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

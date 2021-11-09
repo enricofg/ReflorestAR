@@ -36,7 +36,6 @@ public class CatalogItemFragment extends Fragment {
         paramMinHeight = minHeight;
         paramMaxHeight = maxHeight;
         paramMinDistance = minDist;
-        //paramTreeId = Integer.parseInt(treeId);
         paramImageUrl = imageUrl;
     }
 
@@ -53,7 +52,7 @@ public class CatalogItemFragment extends Fragment {
         toggleNavBar();
         root = inflater.inflate(R.layout.fragment_catalog_item, container, false);
 
-        fragmentContainer = root.findViewById(R.id.project_item_container);
+        fragmentContainer = root.findViewById(R.id.catalog_item_container);
         Picasso.get().load(this.paramImageUrl).into((ImageView) root.findViewById(R.id.imageView));
 
         TextView commonName = root.findViewById(R.id.commonName);
@@ -85,7 +84,7 @@ public class CatalogItemFragment extends Fragment {
     private void returnToCatalog(ConstraintLayout fragmentContainer) {
         if(getActivity()!=null) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.project_item_container, new CatalogFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("catalog_item").commit();
+            fm.beginTransaction().replace(R.id.catalog_item_container, new CatalogFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack("catalog_item").commit();
             //fragmentContainer.setVisibility(View.INVISIBLE);
             fragmentContainer.removeAllViews();
             toggleNavBar();

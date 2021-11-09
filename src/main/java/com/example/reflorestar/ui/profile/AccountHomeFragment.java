@@ -30,7 +30,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class AccountHomeFragment extends Fragment {
 
-    private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
     private LinearLayout buttonsContainer;
     private SharedPreferences sharedPreferences;
@@ -40,7 +39,6 @@ public class AccountHomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_account_home, container, false);
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         fragmentContainer = root.findViewById(R.id.account_home_container);
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
 

@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,22 +32,28 @@ import java.util.HashMap;
 
 public class ProjectsFragment extends Fragment {
 
-    private ProjectsViewModel projectsViewModel;
     private View root;
     private ListView listView;
     private ListItemAdapter adapter;
     private DatabaseReference mDatabase, projectsDB, usersDB;
     private SharedPreferences sharedPreferences;
     private TextView emptyProjectsMessage, pageTitle;
+    private BottomNavigationView navBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        projectsViewModel =
-                new ViewModelProvider(this).get(ProjectsViewModel.class);
         root = inflater.inflate(R.layout.fragment_projects, container, false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         projectsDB = mDatabase.child("projects");
         usersDB = mDatabase.child("users");
+
+        navBar = getActivity().findViewById(R.id.nav_view);
+        listView = root.findViewById(R.id.resultList);
+
+        //to make the list not overlap with the bottom menu navigation
+        float conversionScale = getResources().getDisplayMetrics().density;
+        int dpsConvertedToPixels = (int) (32*conversionScale + 0.5f);
+        listView.setPadding(0,0,0,navBar.getHeight()+dpsConvertedToPixels);
 
         sharedPreferences = root.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
         String authUser = sharedPreferences.getString("username", null);
@@ -99,8 +106,6 @@ public class ProjectsFragment extends Fragment {
     }
 
     private void getProjects(ArrayList<HashMap<String, Object>> projectsList) {
-        listView = root.findViewById(R.id.resultList);
-
         if (!projectsList.isEmpty()) {
             pageTitle.setVisibility(View.VISIBLE);
             emptyProjectsMessage.setVisibility(View.GONE);

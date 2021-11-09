@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.reflorestar.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,24 +35,31 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CatalogFragment extends Fragment {
 
-    private CatalogViewModel catalogViewModel;
     private TextInputLayout searchText;
     private Button searchButton;
     private ListView listView;
     private ListItemAdapter adapter;
     private DatabaseReference mDatabase, treesDB;
     private TextView resultMessage;
+    private View root;
+    private BottomNavigationView navBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        catalogViewModel =
-                new ViewModelProvider(this).get(CatalogViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_catalog, container, false);
+        root = inflater.inflate(R.layout.fragment_catalog, container, false);
         resultMessage = root.findViewById(R.id.emptySearch);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         treesDB = mDatabase.child("trees");
-        queryTrees(root);
+        queryTrees();
+
+        navBar = getActivity().findViewById(R.id.nav_view);
+        listView = root.findViewById(R.id.resultList);
+
+        //to make the list not overlap with the bottom menu navigation
+        float conversionScale = getResources().getDisplayMetrics().density;
+        int dpsConvertedToPixels = (int) (32*conversionScale + 0.5f);
+        listView.setPadding(0,0,0,navBar.getHeight()+dpsConvertedToPixels);
 
         searchText = root.findViewById(R.id.catalogSearch);
         AtomicReference<Editable> editText = new AtomicReference<>(searchText.getEditText().getText());
@@ -72,7 +80,7 @@ public class CatalogFragment extends Fragment {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 //Get map of trees in datasnapshot
-                                getTrees(dataSnapshot, root);
+                                getTrees(dataSnapshot);
                             }
 
                             @Override
@@ -83,26 +91,26 @@ public class CatalogFragment extends Fragment {
             } else {
                 //get all
                 treesDB = mDatabase.child("trees");
-                queryTrees(root);
+                queryTrees();
             }
         });
 
         searchText.setEndIconOnClickListener(view -> {
             searchText.getEditText().setText("");
             treesDB = mDatabase.child("trees");
-            queryTrees(root);
+            queryTrees();
         });
 
         return root;
     }
 
-    private void queryTrees(View root) {
+    private void queryTrees() {
         treesDB.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of trees in datasnapshot
-                        getTrees(dataSnapshot, root);
+                        getTrees(dataSnapshot);
                     }
 
                     @Override
@@ -112,9 +120,7 @@ public class CatalogFragment extends Fragment {
                 });
     }
 
-    private void getTrees(DataSnapshot dataSnapshot, View root) {
-        listView = root.findViewById(R.id.resultList);
-
+    private void getTrees(DataSnapshot dataSnapshot) {
         if (dataSnapshot.getValue() != null) {
             resultMessage.setText("");
 

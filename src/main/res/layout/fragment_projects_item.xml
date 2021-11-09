@@ -31,9 +31,11 @@
         android:layout_marginTop="75dp"
         android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backButtonProj">
+        app:layout_constraintTop_toBottomOf="@+id/backButtonProj"
+        android:scrollbars="none">
 
         <LinearLayout
+            android:id="@+id/itemInfoContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -135,10 +137,9 @@
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:scaleType="fitCenter"
                     app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="250dp">
@@ -256,7 +257,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/imageView6"
@@ -391,8 +393,8 @@
                 android:layout_marginStart="28dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="28dp"
-                android:nestedScrollingEnabled="true"
-                android:scrollbars="none" />
+                android:fadeScrollbars="false"
+                android:scrollbarThumbVertical="@drawable/scrollbar_gradient" />
 
         </LinearLayout>
 

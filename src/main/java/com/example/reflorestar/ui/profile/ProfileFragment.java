@@ -39,6 +39,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.reflorestar.R;
 import com.example.reflorestar.classes.User;
@@ -57,7 +58,6 @@ import java.util.HashMap;
 
 public class ProfileFragment extends Fragment {
 
-    private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
     private View root;
     public User user;
@@ -77,7 +77,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         root = inflater.inflate(R.layout.fragment_profile, container, false);
         fragmentContainer = root.findViewById(R.id.profile_container);
         users = FirebaseDatabase.getInstance().getReference("users");
@@ -174,7 +173,8 @@ public class ProfileFragment extends Fragment {
     protected boolean settingsMenuClick(MenuItem item) {
         if (item.getItemId() == R.id.profile_upload_image) {
             if (ContextCompat.checkSelfPermission(root.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-                showMessage(getString(R.string.pfp_message), getString(R.string.access_warning));
+                Toast.makeText(root.getContext(), getString(R.string.pfp_message), Toast.LENGTH_SHORT).show();
+                //showMessage(getString(R.string.pfp_message), getString(R.string.access_warning));
                 requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 return false;
             } else{

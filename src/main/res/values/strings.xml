@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ReflorestAR</string>
+    <string name="app_name">ReforestAR</string>
     <string name="title_catalog">Catalog</string>
     <string name="title_camera">Reforest</string>
     <string name="title_profile">Profile</string>
@@ -37,7 +37,7 @@
     <string name="create">Create</string>
     <string name="project_login_msg">To view projects, please login.</string>
     <string name="pinus_pinaster">Pinus pinaster</string>
-    <string name="tree_2">Tree number2</string>
+    <string name="tree_2">Salix alba</string>
     <string name="searching_plane_message">Searching for surface</string>
     <string name="waiting_for_tap_message">Tap on the surface to place a tree</string>
     <string name="model_error">Model can\'t be loaded.</string>
@@ -64,7 +64,6 @@
     <string name="user_created">User created successfully. You will now be redirected to your profile page.</string>
     <string name="project_created">Project created successfully.</string>
     <string name="success">Success</string>
-    <string name="not_found">No user with these credentials was found.</string>
     <string name="not_found_warning">User not found</string>
     <string name="not_found_username">No user with this username was found</string>
     <string name="user_blocked">This user is blocked.</string>
@@ -108,4 +107,17 @@
     <string name="available_areas">Available areas</string>
     <string name="load_project">Load project</string>
     <string name="loaded"> loaded.</string>
+    <string name="reforest"> Reforest</string>
+    <string name="not_found">Not found</string>
+    <string name="welcome_to_reforestar">Welcome to ReforestAR!</string>
+    <string name="scroll_down_to_read_all_information_and_instructions_of_the_application">Scroll down to read all information and instructions of the application.</string>
+    <string name="here_you_will_be_able_to_perform_reforestation_simulation_through_the_use_of_your_camera_s_device">Here you will be able to perform reforestation simulation through the use of your camera\'s device.</string>
+    <string name="once_the_camera_opens_please_move_your_device_as_the_on_screen_animation_does_this_will_help_the_camera_detect_surfaces_to_plant_your_trees">Once the camera opens, please move your device as the on-screen animation does. This will help the camera detect surfaces to plant your trees.</string>
+    <string name="once_a_surface_is_detected_it_will_be_represent_by_a_zone_of_white_dots_on_the_screen_you_can_plant_your_trees_there_keep_in_mind_that_trees_must_be_planted_with_a_distance_of_1_5m_apart_each">Once a surface is detected, it will be represent by a zone of white dots on the screen, you can plant your trees there. Keep in mind that trees must be planted with a distance of 1.5m apart each.</string>
+    <string name="inside_the_ar_camera_a_configuration_menu_is_available_to_customize_your_planting_session_clicking_the_icon_above_toggles_this_menu">Inside the AR camera, an options menu is available to customize your planting session, clicking the icon above toggles this menu.</string>
+    <string name="when_inside_the_ar_camera_you_may_close_it_by_clicking_on_the_above_icon">When inside the AR camera, you may close it by clicking on the above icon.</string>
+    <string name="you_may_also_remove_a_tree_by_holding_it_for_1_5s">You may also remove a tree by holding it for 1.5s.</string>
+    <string name="to_save_your_projects_you_must_have_an_account_that_can_be_created_in_the_profile_section_or_be_logged_in">To save your projects you must have an account that can be created in the profile section or be logged in.</string>
+    <string name="to_get_started_just_click_on_the_button_below">To get started with the AR experience, just click on the button below!</string>
+    <string name="tree_3">Pine tree</string>
 </resources>

@@ -5,6 +5,7 @@
     android:id="@+id/layoutCamera"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:screenOrientation="portrait"
     tools:context=".MainActivity">
 
    <fragment
@@ -232,6 +233,7 @@
                         android:layout_weight="0.5"
                         android:scaleType="fitCenter"
                         app:srcCompat="@drawable/pinetree" />
+                    <!-- app:srcCompat="@drawable/salixalba"-->
 
                     <Button
                         android:id="@+id/buttonTree2"
@@ -239,7 +241,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="128"
                         android:background="?android:attr/selectableItemBackground"
-                        android:text="@string/tree_2"
+                        android:text="@string/tree_3"
                         android:textAllCaps="false" />
                 </LinearLayout>
 
@@ -269,19 +271,57 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <LinearLayout
+                        android:id="@+id/linearLayout4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.1"
+                            android:text="-"
+                            android:textColor="@color/lightGray"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5" />
+
+                        <TextView
+                            android:id="@+id/textView32"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.1"
+                            android:text="+"
+                            android:textColor="@color/colorLight"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+
                     <SeekBar
                         android:id="@+id/seekBarTreeQuantity"
                         android:layout_width="match_parent"
                         android:layout_height="38dp"
-                        android:layout_marginStart="88dp"
-                        android:layout_marginEnd="88dp"
                         android:layerType="software"
-                        android:scaleX="2"
-                        android:scaleY="2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <!--
+                        android:layout_marginStart="88dp"
+                        android:layout_marginEnd="88dp"
+                        android:scaleX="2"
+                        android:scaleY="2"
+                -->
 
             </LinearLayout>
 

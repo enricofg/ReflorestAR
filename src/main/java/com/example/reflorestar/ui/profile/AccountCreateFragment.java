@@ -39,7 +39,6 @@ import java.security.NoSuchAlgorithmException;
 public class AccountCreateFragment extends Fragment {
 
     private View root;
-    private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
     private TextInputLayout emailInput, passwordInput, confirmPasswordInput, usernameInput, nameInput;
     private TextView emailWarning, passwordWarning, usernameWarning, nameWarning;
@@ -54,7 +53,6 @@ public class AccountCreateFragment extends Fragment {
         navBar = getActivity().findViewById(R.id.nav_view);
         toggleNavBar();
         root = inflater.inflate(R.layout.fragment_account_create, container, false);
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
         fragmentContainer = root.findViewById(R.id.create_account_container);
 
@@ -83,6 +81,7 @@ public class AccountCreateFragment extends Fragment {
         buttonConfirmAccount.setOnClickListener(v -> {
             //validations:
             if (!usernameText.toString().isEmpty() && !emailText.toString().isEmpty() && !nameText.toString().isEmpty() && !passwordText.toString().isEmpty() && !confirmText.toString().isEmpty()) {
+
                 validateUsername(usernameText);
                 validateName(nameText);
                 validateEmail(emailText);

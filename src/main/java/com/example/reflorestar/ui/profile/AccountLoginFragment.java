@@ -34,7 +34,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class AccountLoginFragment extends Fragment {
 
-    private ProfileViewModel profileViewModel;
     private ConstraintLayout fragmentContainer;
     private TextInputLayout usernameInput, passwordInput;
     private TextView passwordWarning;
@@ -45,7 +44,6 @@ public class AccountLoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_account_login, container, false);
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         fragmentContainer = root.findViewById(R.id.login_container);
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("users");
 

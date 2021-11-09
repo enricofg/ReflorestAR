@@ -3,6 +3,7 @@ package com.example.reflorestar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,6 +30,7 @@ import com.example.reflorestar.classes.Project;
 import com.example.reflorestar.classes.Tree;
 import com.example.reflorestar.classes.User;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Pose;
@@ -85,6 +87,7 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //hide support action bar
         if (getSupportActionBar() != null) {
@@ -203,6 +206,8 @@ public class CameraActivity extends AppCompatActivity {
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
 
+
+        //if project name is not empty, then this project should be loaded
         if (!projectName.isEmpty()) {
             arFragment.getArSceneView().getScene().addOnUpdateListener(this::loadProjectOnDetectedPlane);
         }
@@ -239,6 +244,11 @@ public class CameraActivity extends AppCompatActivity {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             int i = 0;
             Session session = arFragment.getArSceneView().getSession();
+
+            /*//only detect horizontal planes
+            Config config = arFragment.getArSceneView().getSession().getConfig();
+            config.setPlaneFindingMode(Config.PlaneFindingMode.HORIZONTAL);
+            arFragment.getArSceneView().getSession().configure(config);*/
 
             do {
                 Anchor anchor;
@@ -416,7 +426,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void undoLastAction() {
-        if (undoFlag && anchorList.size() > 0) {
+        if (undoFlag && anchorList.size() > 0 && trees.size() > 0) {
             //undo last action
             trees.subList(trees.size() - lastNumber, trees.size()).clear();
 
@@ -456,9 +466,10 @@ public class CameraActivity extends AppCompatActivity {
     public void checkLocationStatus() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
-            showMessage(getString(R.string.location_message), getString(R.string.access_warning));
+            Toast.makeText(this, getString(R.string.location_message), Toast.LENGTH_SHORT).show();
+            //showMessage(getString(R.string.location_message), getString(R.string.access_warning));
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            saveButton.setVisibility(View.INVISIBLE);
+            //saveButton.setVisibility(View.INVISIBLE);
             return;
         } else {
             saveButton.setVisibility(View.VISIBLE);

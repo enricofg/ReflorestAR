@@ -23,6 +23,7 @@
         android:animateLayoutChanges="true"
         />
         <!--
+            app:labelVisibilityMode="labeled"
             android:background="?android:attr/windowBackground"
             style="@style/BottomNavigation"
         -->

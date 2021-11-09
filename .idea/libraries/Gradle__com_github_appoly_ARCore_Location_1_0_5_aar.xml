@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.appoly:ARCore-Location:1.0.5@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6f72c6b17c3a1dc3d0c82eb046a53aa2/jetified-ARCore-Location-1.0.5/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6f72c6b17c3a1dc3d0c82eb046a53aa2/jetified-ARCore-Location-1.0.5/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6f72c6b17c3a1dc3d0c82eb046a53aa2/jetified-ARCore-Location-1.0.5/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9b650bfb5268161f5eb88554ef045b38/jetified-ARCore-Location-1.0.5/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9b650bfb5268161f5eb88554ef045b38/jetified-ARCore-Location-1.0.5/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9b650bfb5268161f5eb88554ef045b38/jetified-ARCore-Location-1.0.5/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

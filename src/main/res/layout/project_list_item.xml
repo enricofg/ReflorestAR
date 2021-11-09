@@ -48,7 +48,7 @@
                     android:gravity="start"
                     android:text="@string/availability"
                     android:textColor="@color/colorDark"
-                    android:textSize="15.5sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -72,7 +72,7 @@
                     android:gravity="start"
                     android:text="@string/status"
                     android:textColor="@color/colorDark"
-                    android:textSize="15.5sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
