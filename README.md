@@ -33,6 +33,10 @@ https://www.figma.com/file/82tzFqliIIcNKItbpt8iw8/Prot%C3%B3tipoAR-Reflorestar?n
 ![image](https://user-images.githubusercontent.com/25649121/141102057-87fa16be-08db-4c83-afaa-b6e3340e78c2.png)
 ![image](https://user-images.githubusercontent.com/25649121/141102089-e3829b94-886b-4fa6-8b8a-a2bd99ee7768.png)
 
+**AR Camera Controls Interface**
+
+![image](https://user-images.githubusercontent.com/25649121/141117079-90256b49-9607-4f9d-b65d-50c54e45de88.png)
+
 
 A quick example of a reforestation project being created and edited in the app: <br/>
 https://user-images.githubusercontent.com/25649121/141100908-d2cbb682-32b8-402b-8c65-64b593b8e5cf.mp4
