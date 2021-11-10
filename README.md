@@ -34,3 +34,6 @@ This app was made with the purpose of reforesting burned down areas in the 2017 
 
 A quick example of a reforestation project being created and edited in the app:
 https://user-images.githubusercontent.com/25649121/141100908-d2cbb682-32b8-402b-8c65-64b593b8e5cf.mp4
+
+Initial Figma prototype can be viewed here:
+https://www.figma.com/file/82tzFqliIIcNKItbpt8iw8/Prot%C3%B3tipoAR-Reflorestar?node-id=0%3A1
